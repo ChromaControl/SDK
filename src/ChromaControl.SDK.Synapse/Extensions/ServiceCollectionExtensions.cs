@@ -1,0 +1,25 @@
+﻿// Licensed to the Chroma Control Contributors under one or more agreements.
+// The Chroma Control Contributors licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using Microsoft.Extensions.DependencyInjection;
+
+namespace ChromaControl.SDK.Synapse.Extensions;
+
+/// <summary>
+/// Extension methods for adding the Synapse SDK to an <see cref="IServiceCollection" />.
+/// </summary>
+public static class ServiceCollectionSynapseExtensions
+{
+    /// <summary>
+    /// Add an <see cref="ISynapseSDK"/> registration.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to register with.</param>
+    /// <returns>The original <see cref="IServiceCollection"/>.</returns>
+    public static IServiceCollection AddSynapseSDK(this IServiceCollection services)
+    {
+        services.AddSingleton<ISynapseSDK, SynapseSDK>();
+
+        return services;
+    }
+}
