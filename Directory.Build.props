@@ -4,7 +4,7 @@
     <Product>Chroma Control</Product>
     <Version>1.0.0</Version>
     <Authors>Chroma Control Contributors</Authors>
-    <Description>Device SDK for Chroma Control.</Description>
+    <Description>SDK for Chroma Control</Description>
     <RepositoryUrl>https://github.com/ChromaControl/SDK</RepositoryUrl>
     <PackageProjectUrl>https://github.com/ChromaControl/SDK</PackageProjectUrl>
     <PackageReleaseNotes>https://github.com/ChromaControl/SDK/releases</PackageReleaseNotes>
