@@ -5,7 +5,11 @@ VisualStudioVersion = 17.11.35017.193
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChromaControl.SDK.Synapse", "src\ChromaControl.SDK.Synapse\ChromaControl.SDK.Synapse.csproj", "{D192C5EA-EC40-4BA9-AE43-ADA9FB4F446A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChromaControl.SDK.Synapse.Sample", "src\ChromaControl.SDK.Synapse.Sample\ChromaControl.SDK.Synapse.Sample.csproj", "{D8F00B39-3709-4157-9F87-521FDEA6041C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChromaControl.SDK.Synapse.Sample", "src\ChromaControl.SDK.Synapse.Sample\ChromaControl.SDK.Synapse.Sample.csproj", "{D8F00B39-3709-4157-9F87-521FDEA6041C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChromaControl.SDK.OpenRGB", "src\ChromaControl.SDK.OpenRGB\ChromaControl.SDK.OpenRGB.csproj", "{9542A5ED-B1B8-4E27-9AC1-B4C0565F72C1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChromaControl.SDK.OpenRGB.Sample", "src\ChromaControl.SDK.OpenRGB.Sample\ChromaControl.SDK.OpenRGB.Sample.csproj", "{ED14E023-F619-4B15-8730-5C6195CB9358}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{D8F00B39-3709-4157-9F87-521FDEA6041C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8F00B39-3709-4157-9F87-521FDEA6041C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8F00B39-3709-4157-9F87-521FDEA6041C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9542A5ED-B1B8-4E27-9AC1-B4C0565F72C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9542A5ED-B1B8-4E27-9AC1-B4C0565F72C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9542A5ED-B1B8-4E27-9AC1-B4C0565F72C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9542A5ED-B1B8-4E27-9AC1-B4C0565F72C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED14E023-F619-4B15-8730-5C6195CB9358}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED14E023-F619-4B15-8730-5C6195CB9358}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED14E023-F619-4B15-8730-5C6195CB9358}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED14E023-F619-4B15-8730-5C6195CB9358}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
