@@ -8,12 +8,12 @@ using ChromaControl.SDK.Synapse.Structs;
 namespace ChromaControl.SDK.Synapse;
 
 /// <summary>
-/// The Razer Synapse SDK
+/// The Razer Synapse Service
 /// </summary>
-public interface ISynapseSDK
+public interface ISynapseService
 {
     /// <summary>
-    /// If the Synapse SDK has started.
+    /// If the Synapse service has started.
     /// </summary>
     bool Started { get; }
 
@@ -23,7 +23,7 @@ public interface ISynapseSDK
     SynapseStatus CurrentStatus { get; }
 
     /// <summary>
-    /// Occurs when the SDK status changes.
+    /// Occurs when the service status changes.
     /// </summary>
     event EventHandler<SynapseStatus>? StatusChanged;
 
@@ -33,15 +33,15 @@ public interface ISynapseSDK
     event EventHandler<SynapseEffect>? EffectReceived;
 
     /// <summary>
-    /// Starts the Synapse SDK.
+    /// Starts the Synapse service.
     /// </summary>
     /// <param name="appId">Application Id for authentication.</param>
     /// <returns>A <see cref="SynapseResult"/>.</returns>
-    SynapseResult StartSDK(in Guid appId);
+    SynapseResult StartService(in Guid appId);
 
     /// <summary>
-    /// Stopes the Synapse SDK.
+    /// Stopes the Synapse service.
     /// </summary>
     /// <returns>A <see cref="SynapseResult"/>.</returns>
-    SynapseResult StopSDK();
+    SynapseResult StopService();
 }

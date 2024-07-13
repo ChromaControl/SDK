@@ -14,7 +14,7 @@ namespace ChromaControl.SDK.Synapse.Sample;
 public partial class Worker : IHostedService
 {
     private readonly ILogger<Worker> _logger;
-    private readonly ISynapseSDK _sdk;
+    private readonly ISynapseService _synapse;
 
     private Color _colorCache;
 
@@ -34,13 +34,13 @@ public partial class Worker : IHostedService
     /// Creates a <see cref="Worker"/> instance.
     /// </summary>
     /// <param name="logger">The <see cref="ILogger{TCategoryName}"/>.</param>
-    /// <param name="sdk">The <see cref="ISynapseSDK"/>.</param>
-    public Worker(ILogger<Worker> logger, ISynapseSDK sdk)
+    /// <param name="synapse">The <see cref="ISynapseService"/>.</param>
+    public Worker(ILogger<Worker> logger, ISynapseService synapse)
     {
         _logger = logger;
-        _sdk = sdk;
-        _sdk.StatusChanged += StatusChanged;
-        _sdk.EffectReceived += EffectReceived;
+        _synapse = synapse;
+        _synapse.StatusChanged += StatusChanged;
+        _synapse.EffectReceived += EffectReceived;
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public partial class Worker : IHostedService
     {
         LogStartMessage(_logger);
 
-        _sdk.StartSDK(new("00000000-0000-0000-0000-000000000000"));
+        _synapse.StartService(new("00000000-0000-0000-0000-000000000000"));
 
         return Task.CompletedTask;
     }
@@ -66,7 +66,7 @@ public partial class Worker : IHostedService
     {
         LogStopMessage(_logger);
 
-        _sdk.StopSDK();
+        _synapse.StopService();
 
         return Task.CompletedTask;
     }

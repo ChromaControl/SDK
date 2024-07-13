@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace ChromaControl.SDK.Synapse;
 
-public partial class SynapseSDK
+public partial class SynapseService
 {
     private delegate SynapseResult RegisterEventNotificationCallback(SynapseEventType type, nint pData);
 

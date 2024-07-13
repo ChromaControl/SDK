@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 namespace ChromaControl.SDK.Synapse;
 
 /// <inheritdoc/>
-public partial class SynapseSDK : ISynapseSDK
+public partial class SynapseService : ISynapseService
 {
     /// <inheritdoc/>
     public bool Started { get; internal set; }
@@ -28,15 +28,15 @@ public partial class SynapseSDK : ISynapseSDK
     private RegisterEventNotificationCallback RegisterEventNotificationCallbackState { get; set; }
 
     /// <summary>
-    /// Creates a <see cref="SynapseSDK"/> instance.
+    /// Creates a <see cref="SynapseService"/> instance.
     /// </summary>
-    public SynapseSDK()
+    public SynapseService()
     {
         RegisterEventNotificationCallbackState = new(OnEventNotification);
     }
 
     /// <inheritdoc/>
-    public SynapseResult StartSDK(in Guid appId)
+    public SynapseResult StartService(in Guid appId)
     {
         var initResult = Init(appId);
 
@@ -56,7 +56,7 @@ public partial class SynapseSDK : ISynapseSDK
     }
 
     /// <inheritdoc/>
-    public SynapseResult StopSDK()
+    public SynapseResult StopService()
     {
         var unRegisterResult = UnRegisterEventNotification();
 
