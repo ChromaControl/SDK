@@ -18,10 +18,10 @@ public partial class Worker : IHostedService
 
     private Color _colorCache;
 
-    [LoggerMessage(Level = LogLevel.Information, Message = "Starting Synapse SDK...")]
+    [LoggerMessage(Level = LogLevel.Information, Message = "Starting Synapse Service...")]
     private static partial void LogStartMessage(ILogger logger);
 
-    [LoggerMessage(Level = LogLevel.Information, Message = "Stopping Synapse SDK...")]
+    [LoggerMessage(Level = LogLevel.Information, Message = "Stopping Synapse Service...")]
     private static partial void LogStopMessage(ILogger logger);
 
     [LoggerMessage(Level = LogLevel.Information, Message = "Synapse Status Changed To {status}")]
