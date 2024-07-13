@@ -8,7 +8,7 @@ using ChromaControl.SDK.Synapse.Structs;
 namespace ChromaControl.SDK.Synapse;
 
 /// <summary>
-/// The Razer Synapse Service
+/// The Razer Synapse Service.
 /// </summary>
 public interface ISynapseService
 {
