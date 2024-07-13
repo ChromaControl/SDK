@@ -12,7 +12,7 @@ namespace ChromaControl.SDK.Synapse.Extensions;
 public static class ServiceCollectionSynapseExtensions
 {
     /// <summary>
-    /// Registers the SDK in an <see cref="IServiceCollection"/>.
+    /// Registers the Synapse SDK in an <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to register with.</param>
     /// <returns>The original <see cref="IServiceCollection"/>.</returns>
