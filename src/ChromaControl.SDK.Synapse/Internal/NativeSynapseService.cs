@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace ChromaControl.SDK.Synapse.Internal;
 
-internal sealed partial class NativeService
+internal sealed partial class NativeSynapseService
 {
     private static bool Is32Bit => nint.Size == 4;
 

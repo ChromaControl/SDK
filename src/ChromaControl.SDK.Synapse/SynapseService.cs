@@ -39,14 +39,14 @@ public partial class SynapseService : ISynapseService
     /// <inheritdoc/>
     public SynapseResult StartService(in Guid appId)
     {
-        var initResult = NativeService.Init(appId);
+        var initResult = NativeSynapseService.Init(appId);
 
         if (initResult != SynapseResult.Success)
         {
             return initResult;
         }
 
-        var registerResult = NativeService.RegisterEventNotification(RegisterEventNotificationCallbackState);
+        var registerResult = NativeSynapseService.RegisterEventNotification(RegisterEventNotificationCallbackState);
 
         if (registerResult == SynapseResult.Success)
         {
@@ -59,14 +59,14 @@ public partial class SynapseService : ISynapseService
     /// <inheritdoc/>
     public SynapseResult StopService()
     {
-        var unRegisterResult = NativeService.UnRegisterEventNotification();
+        var unRegisterResult = NativeSynapseService.UnRegisterEventNotification();
 
         if (unRegisterResult != SynapseResult.Success)
         {
             return unRegisterResult;
         }
 
-        var unInitResult = NativeService.UnInit();
+        var unInitResult = NativeSynapseService.UnInit();
 
         if (unInitResult == SynapseResult.Success)
         {
