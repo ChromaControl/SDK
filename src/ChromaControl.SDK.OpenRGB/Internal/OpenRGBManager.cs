@@ -2,7 +2,10 @@
 // The Chroma Control Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using ChromaControl.SDK.OpenRGB.Extensions;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 
 namespace ChromaControl.SDK.OpenRGB.Internal;
 
@@ -20,7 +23,10 @@ internal sealed partial class OpenRGBManager : IDisposable
 
     public void Start()
     {
+        UpdateConfigFile();
+
         _job.AssignProcess(Process.GetCurrentProcess());
+
         _process.Start();
     }
 
@@ -39,14 +45,78 @@ internal sealed partial class OpenRGBManager : IDisposable
         GC.SuppressFinalize(this);
     }
 
+    private static void UpdateConfigFile()
+    {
+        var configFilePath = Path.Combine(OpenRGBConstants.ConfigPath, "OpenRGB.json");
+
+        JsonNode? document;
+
+        if (File.Exists(configFilePath))
+        {
+            var json = File.ReadAllText(configFilePath);
+            document = JsonNode.Parse(json)!;
+        }
+        else
+        {
+            document = JsonNode.Parse("{\"Detectors\":{\"detectors\":{}}}")!;
+        }
+
+        foreach (var detector in OpenRGBConstants.DisabledDetectors)
+        {
+            document["Detectors"]!["detectors"]![detector] = false;
+        }
+
+        try
+        {
+            var mergeConfigFilePath = Path.Combine(OpenRGBConstants.ConfigPath, "OpenRGB.Merge.json");
+
+            if (File.Exists(mergeConfigFilePath))
+            {
+                var json = File.ReadAllText(mergeConfigFilePath);
+                var mergeDocument = JsonNode.Parse(json);
+
+                if (mergeDocument is not null)
+                {
+                    document.Merge(mergeDocument);
+                }
+            }
+        }
+        catch { }
+
+        var newJson = document.ToJsonString(new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
+        File.WriteAllText(configFilePath, newJson);
+    }
+
     private static Process CreateProcess()
     {
         var process = new Process();
 
+        var configPath = OpenRGBConstants.ConfigPath;
+
+        if (!Directory.Exists(configPath))
+        {
+            Directory.CreateDirectory(configPath);
+        }
+
+        configPath = $"{configPath}";
+
+        var arguments = new string[]
+        {
+            "--server",
+            "--server-host 127.0.0.1",
+            "--server-port 6744",
+            "--noautoconnect",
+            $"--config \"{configPath}\""
+        };
+
         process.StartInfo.FileName = "cmd.exe";
         process.StartInfo.UseShellExecute = true;
         process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-        process.StartInfo.Arguments = $"/C \"{FindExecutablePath()}\" --noautoconnect --server";
+        process.StartInfo.Arguments = $"/C \"\"{FindExecutablePath()}\" {string.Join(' ', arguments)}\"";
 
         return process;
     }
