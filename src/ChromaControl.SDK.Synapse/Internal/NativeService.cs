@@ -6,15 +6,13 @@ using ChromaControl.SDK.Synapse.Enums;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace ChromaControl.SDK.Synapse;
+namespace ChromaControl.SDK.Synapse.Internal;
 
-public partial class SynapseService
+internal sealed partial class NativeService
 {
-    private delegate SynapseResult RegisterEventNotificationCallback(SynapseEventType type, nint pData);
-
     private static bool Is32Bit => nint.Size == 4;
 
-    private static SynapseResult Init(in Guid appId)
+    public static SynapseResult Init(in Guid appId)
     {
         try
         {
@@ -26,7 +24,7 @@ public partial class SynapseService
         }
     }
 
-    private static SynapseResult UnInit()
+    public static SynapseResult UnInit()
     {
         try
         {
@@ -38,7 +36,7 @@ public partial class SynapseService
         }
     }
 
-    private static SynapseResult RegisterEventNotification(RegisterEventNotificationCallback lpFunc)
+    public static SynapseResult RegisterEventNotification(RegisterEventNotificationCallback lpFunc)
     {
         try
         {
@@ -50,7 +48,7 @@ public partial class SynapseService
         }
     }
 
-    private static SynapseResult UnRegisterEventNotification()
+    public static SynapseResult UnRegisterEventNotification()
     {
         try
         {

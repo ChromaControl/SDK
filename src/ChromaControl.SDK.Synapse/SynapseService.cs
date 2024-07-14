@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.Synapse.Enums;
+using ChromaControl.SDK.Synapse.Internal;
 using ChromaControl.SDK.Synapse.Structs;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -38,14 +39,14 @@ public partial class SynapseService : ISynapseService
     /// <inheritdoc/>
     public SynapseResult StartService(in Guid appId)
     {
-        var initResult = Init(appId);
+        var initResult = NativeService.Init(appId);
 
         if (initResult != SynapseResult.Success)
         {
             return initResult;
         }
 
-        var registerResult = RegisterEventNotification(RegisterEventNotificationCallbackState);
+        var registerResult = NativeService.RegisterEventNotification(RegisterEventNotificationCallbackState);
 
         if (registerResult == SynapseResult.Success)
         {
@@ -58,14 +59,14 @@ public partial class SynapseService : ISynapseService
     /// <inheritdoc/>
     public SynapseResult StopService()
     {
-        var unRegisterResult = UnRegisterEventNotification();
+        var unRegisterResult = NativeService.UnRegisterEventNotification();
 
         if (unRegisterResult != SynapseResult.Success)
         {
             return unRegisterResult;
         }
 
-        var unInitResult = UnInit();
+        var unInitResult = NativeService.UnInit();
 
         if (unInitResult == SynapseResult.Success)
         {
