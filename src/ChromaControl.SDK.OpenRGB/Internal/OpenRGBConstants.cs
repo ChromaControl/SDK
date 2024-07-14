@@ -10,6 +10,7 @@ internal sealed class OpenRGBConstants
 {
     public static readonly string DataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "ChromaControl");
     public static readonly string ConfigPath = Path.Combine(DataPath, "config");
+    public static readonly int PortNumber = 22742;
 
     public static readonly ImmutableList<string> DisabledDetectors =
         [

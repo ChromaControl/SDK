@@ -108,7 +108,7 @@ internal sealed partial class OpenRGBManager : IDisposable
         {
             "--server",
             "--server-host 127.0.0.1",
-            "--server-port 6744",
+            $"--server-port {OpenRGBConstants.PortNumber}",
             "--noautoconnect",
             $"--config \"{configPath}\""
         };
