@@ -46,7 +46,34 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         });
     }
 
-    public async Task ProcessReadAsync()
+    public async ValueTask DisposeAsync()
+    {
+        if (_connection is null)
+        {
+            return;
+        }
+
+        if (_writer is not null)
+        {
+            await _writer.DisposeAsync().ConfigureAwait(false);
+        }
+
+        _connection.Transport.Input.CancelPendingRead();
+
+        if (_readingTask is not null)
+        {
+            await _readingTask.ConfigureAwait(false);
+        }
+
+        if (_reader is not null)
+        {
+            await _reader.DisposeAsync().ConfigureAwait(false);
+        }
+
+        await _connection.DisposeAsync().ConfigureAwait(false);
+    }
+
+    private async Task ProcessReadAsync()
     {
         if (_reader is null)
         {
@@ -80,32 +107,5 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
 
             _reader.Advance();
         }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_connection is null)
-        {
-            return;
-        }
-
-        if (_writer is not null)
-        {
-            await _writer.DisposeAsync().ConfigureAwait(false);
-        }
-
-        _connection.Transport.Input.CancelPendingRead();
-
-        if (_readingTask is not null)
-        {
-            await _readingTask.ConfigureAwait(false);
-        }
-
-        if (_reader is not null)
-        {
-            await _reader.DisposeAsync().ConfigureAwait(false);
-        }
-
-        await _connection.DisposeAsync().ConfigureAwait(false);
     }
 }
