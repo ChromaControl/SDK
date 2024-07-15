@@ -9,24 +9,30 @@ namespace ChromaControl.SDK.OpenRGB;
 /// <inheritdoc/>
 public class OpenRGBService : IOpenRGBService, IDisposable
 {
-    private readonly OpenRGBManager _openRGB = new();
+    private readonly OpenRGBManager _openRGBManager = new();
+    private readonly NativeOpenRGBService _openRGBService = new();
 
     /// <inheritdoc/>
-    public void StartService()
+    public async Task StartServiceAsync()
     {
-        _openRGB.Start();
+        _openRGBManager.Start();
+
+        await _openRGBService.ConnectAsync();
+        await _openRGBService.SetClientNameAsync("Chroma Control");
     }
 
     /// <inheritdoc/>
-    public void StopService()
+    public async Task StopServiceAsync()
     {
-        _openRGB.Stop();
+        _openRGBManager.Stop();
+
+        await Task.Delay(1);
     }
 
     /// <inheritdoc/>
     public void Dispose()
     {
-        _openRGB.Dispose();
+        _openRGBManager.Dispose();
 
         GC.SuppressFinalize(this);
     }

@@ -5,7 +5,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-namespace ChromaControl.SDK.OpenRGB.Extensions;
+namespace ChromaControl.SDK.OpenRGB.Internal.Extensions;
 
 internal static class JsonNodeExtensions
 {

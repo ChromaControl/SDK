@@ -38,7 +38,7 @@ public partial class Worker : IHostedService
     {
         LogStartMessage(_logger);
 
-        _openRGB.StartService();
+        _openRGB.StartServiceAsync();
 
         return Task.CompletedTask;
     }
@@ -52,7 +52,7 @@ public partial class Worker : IHostedService
     {
         LogStopMessage(_logger);
 
-        _openRGB.StopService();
+        _openRGB.StopServiceAsync();
 
         return Task.CompletedTask;
     }

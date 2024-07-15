@@ -10,7 +10,7 @@ using Windows.Win32;
 using Windows.Win32.Security;
 using Windows.Win32.System.JobObjects;
 
-namespace ChromaControl.SDK.OpenRGB.Internal;
+namespace ChromaControl.SDK.OpenRGB.Internal.Windows;
 
 internal sealed class Job : IDisposable
 {
@@ -28,7 +28,7 @@ internal sealed class Job : IDisposable
         var securityAttributes = new SECURITY_ATTRIBUTES
         {
             bInheritHandle = false,
-            lpSecurityDescriptor = IntPtr.Zero.ToPointer(),
+            lpSecurityDescriptor = nint.Zero.ToPointer(),
             nLength = (uint)Marshal.SizeOf(typeof(SECURITY_ATTRIBUTES))
         };
 

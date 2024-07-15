@@ -12,10 +12,12 @@ public interface IOpenRGBService
     /// <summary>
     /// Starts the OpenRGB service.
     /// </summary>
-    void StartService();
+    /// <returns>A <see cref="Task"/>.</returns>
+    Task StartServiceAsync();
 
     /// <summary>
     /// Stopes the OpenRGB service.
     /// </summary>
-    void StopService();
+    /// <returns>A <see cref="Task"/>.</returns>
+    Task StopServiceAsync();
 }
