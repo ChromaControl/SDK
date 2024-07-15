@@ -4,6 +4,7 @@
 
 using ChromaControl.SDK.Synapse.Enums;
 using ChromaControl.SDK.Synapse.Internal;
+using ChromaControl.SDK.Synapse.Internal.Enums;
 using ChromaControl.SDK.Synapse.Structs;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -26,7 +27,7 @@ public partial class SynapseService : ISynapseService
     /// <inheritdoc/>
     public event EventHandler<SynapseEffect>? EffectReceived;
 
-    private RegisterEventNotificationCallback RegisterEventNotificationCallbackState { get; set; }
+    private NativeSynapseService.RegisterEventNotificationCallback RegisterEventNotificationCallbackState { get; set; }
 
     /// <summary>
     /// Creates a <see cref="SynapseService"/> instance.

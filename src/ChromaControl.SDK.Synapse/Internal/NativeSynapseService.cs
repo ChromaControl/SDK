@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.Synapse.Enums;
+using ChromaControl.SDK.Synapse.Internal.Enums;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -11,6 +12,8 @@ namespace ChromaControl.SDK.Synapse.Internal;
 internal sealed partial class NativeSynapseService
 {
     private static bool Is32Bit => nint.Size == 4;
+
+    internal delegate SynapseResult RegisterEventNotificationCallback(SynapseEventType type, nint pData);
 
     public static SynapseResult Init(in Guid appId)
     {
