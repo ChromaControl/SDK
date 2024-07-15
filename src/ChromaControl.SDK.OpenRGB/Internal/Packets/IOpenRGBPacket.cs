@@ -5,7 +5,7 @@
 using ChromaControl.SDK.OpenRGB.Internal.Enums;
 using System.Buffers;
 
-namespace ChromaControl.SDK.OpenRGB.Internal;
+namespace ChromaControl.SDK.OpenRGB.Internal.Packets;
 
 internal interface IOpenRGBPacket
 {

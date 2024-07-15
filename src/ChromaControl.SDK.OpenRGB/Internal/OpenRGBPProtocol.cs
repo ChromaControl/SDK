@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.OpenRGB.Internal.Extensions;
+using ChromaControl.SDK.OpenRGB.Internal.Packets;
 using ChromaControl.SDK.OpenRGB.Internal.Protocol;
 using System.Buffers;
 using System.Text;
