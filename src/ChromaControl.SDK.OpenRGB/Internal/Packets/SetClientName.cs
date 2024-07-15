@@ -22,6 +22,11 @@ internal struct SetClientName : IOpenRGBPacket
         Name = name;
     }
 
+    public bool TryParse(in ReadOnlySequence<byte> input)
+    {
+        throw new NotImplementedException();
+    }
+
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
         output.Write(Encoding.ASCII.GetBytes(Name + '\0'));

@@ -13,6 +13,8 @@ internal interface IOpenRGBPacket
 
     uint DeviceIndex { get; set; }
 
+    bool TryParse(in ReadOnlySequence<byte> input);
+
     void WriteToBuffer(IBufferWriter<byte> output);
 
     uint GetPacketLength();
