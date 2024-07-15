@@ -9,6 +9,11 @@ namespace ChromaControl.SDK.OpenRGB.Internal.Extensions;
 
 internal static class ConnectionContextExtensions
 {
+    public static ProtocolReader CreateReader(this ConnectionContext connection)
+    {
+        return new ProtocolReader(connection.Transport.Input);
+    }
+
     public static ProtocolWriter CreateWriter(this ConnectionContext connection)
     {
         return new ProtocolWriter(connection.Transport.Output);
