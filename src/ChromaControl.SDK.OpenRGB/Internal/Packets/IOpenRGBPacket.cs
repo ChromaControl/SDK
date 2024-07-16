@@ -9,11 +9,11 @@ namespace ChromaControl.SDK.OpenRGB.Internal.Packets;
 
 internal interface IOpenRGBPacket
 {
-    PacketId PacketId { get; }
+    PacketId Id { get; }
 
     uint DeviceIndex { get; set; }
 
-    bool TryParse(in ReadOnlySequence<byte> input);
+    bool TryParse(in SequenceReader<byte> input);
 
     void WriteToBuffer(IBufferWriter<byte> output);
 

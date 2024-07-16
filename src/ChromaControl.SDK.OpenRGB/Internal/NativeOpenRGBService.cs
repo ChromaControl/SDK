@@ -7,7 +7,9 @@ using ChromaControl.SDK.OpenRGB.Internal.Extensions;
 using ChromaControl.SDK.OpenRGB.Internal.Packets;
 using ChromaControl.SDK.OpenRGB.Internal.Protocol;
 using ChromaControl.SDK.OpenRGB.Internal.Sockets;
+using ChromaControl.SDK.OpenRGB.Structs;
 using Microsoft.AspNetCore.Connections;
+using System.Collections.Concurrent;
 using System.Net;
 
 namespace ChromaControl.SDK.OpenRGB.Internal;
@@ -19,8 +21,23 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
     private ProtocolWriter? _writer;
     private Task? _readingTask;
 
-    private readonly OpenRGBPProtocol _protocol = new();
-    private readonly SocketConnectionFactory _connectionFactory = new();
+    private readonly SocketConnectionFactory _connectionFactory;
+    private readonly OpenRGBPProtocol _protocol;
+    private readonly Dictionary<PacketId, BlockingCollection<IOpenRGBPacket>> _pendingRequests;
+    private readonly List<Device> _devices;
+
+    private event EventHandler DeviceListUpdated;
+
+    public NativeOpenRGBService()
+    {
+        _protocol = new();
+        _connectionFactory = new();
+        _pendingRequests = Enum.GetValues<PacketId>()
+            .ToDictionary(id => id, _ => new BlockingCollection<IOpenRGBPacket>());
+        _devices = [];
+
+        DeviceListUpdated += OnDeviceListUpdated;
+    }
 
     public async Task ConnectAsync(CancellationToken cancellationToken = default)
     {
@@ -33,14 +50,17 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         _readingTask = ProcessReadAsync();
     }
 
+    public async Task<RequestProtocolVersion> RequestProtocolVersionAsync()
+    {
+        return await SendPacketWithResponse(new RequestProtocolVersion
+        {
+            ClientVersion = OpenRGBConstants.ProtocolVersion
+        });
+    }
+
     public async Task SetClientNameAsync(string name)
     {
-        if (_writer is null)
-        {
-            throw new InvalidOperationException("ConnectAsync must be called first.");
-        }
-
-        await _writer.WriteAsync(_protocol, new SetClientName()
+        await SendPacketWithoutResponse(new SetClientName()
         {
             Name = name
         });
@@ -95,17 +115,48 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
                 break;
             }
 
-            switch (packet.PacketId)
+            if (packet.Id == PacketId.DeviceListUpdated)
             {
-                case PacketId.SetClientName:
-                    break;
-                case PacketId.DeviceListUpdated:
-                    break;
-                default:
-                    break;
+                DeviceListUpdated.Invoke(this, new());
+            }
+            else
+            {
+                _pendingRequests[packet.Id].Add(packet);
             }
 
             _reader.Advance();
         }
+    }
+
+    private void OnDeviceListUpdated(object? sender, EventArgs e)
+    {
+        _devices.Clear();
+    }
+
+    private async Task SendPacketWithoutResponse(IOpenRGBPacket packet)
+    {
+        if (_writer is null)
+        {
+            throw new InvalidOperationException("ConnectAsync must be called first.");
+        }
+
+        await _writer.WriteAsync(_protocol, packet);
+    }
+
+    private async Task<TPacket> SendPacketWithResponse<TPacket>(TPacket packet) where TPacket : IOpenRGBPacket
+    {
+        await SendPacketWithoutResponse(packet);
+
+        var result = await Task.Run(() =>
+        {
+            if (!_pendingRequests[packet.Id].TryTake(out var result, 1000))
+            {
+                throw new TimeoutException($"OpenRGB did not reply to {packet.Id} in the required amount of time.");
+            }
+
+            return result;
+        });
+
+        return (TPacket)result;
     }
 }

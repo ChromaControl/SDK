@@ -34,13 +34,11 @@ public partial class Worker : IHostedService
     /// </summary>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/> representing the worker starting.</returns>
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
         LogStartMessage(_logger);
 
-        _openRGB.StartServiceAsync();
-
-        return Task.CompletedTask;
+        await _openRGB.StartServiceAsync();
     }
 
     /// <summary>
@@ -48,12 +46,10 @@ public partial class Worker : IHostedService
     /// </summary>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/> representing the worker stopping.</returns>
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         LogStopMessage(_logger);
 
-        _openRGB.StopServiceAsync();
-
-        return Task.CompletedTask;
+        await _openRGB.StopServiceAsync();
     }
 }

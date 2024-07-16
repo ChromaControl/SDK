@@ -9,11 +9,16 @@ namespace ChromaControl.SDK.OpenRGB.Internal.Packets;
 
 internal struct DeviceListUpdated : IOpenRGBPacket
 {
-    public readonly PacketId PacketId => PacketId.DeviceListUpdated;
+    public readonly PacketId Id => PacketId.DeviceListUpdated;
 
     public uint DeviceIndex { get; set; }
 
-    public readonly bool TryParse(in ReadOnlySequence<byte> input)
+    public DeviceListUpdated()
+    {
+        DeviceIndex = 0;
+    }
+
+    public readonly bool TryParse(in SequenceReader<byte> input)
     {
         return true;
     }

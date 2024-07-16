@@ -6,6 +6,7 @@ namespace ChromaControl.SDK.OpenRGB.Internal.Enums;
 
 internal enum PacketId : uint
 {
+    RequestProtocolVersion = 40,
     SetClientName = 50,
     DeviceListUpdated = 100
 }

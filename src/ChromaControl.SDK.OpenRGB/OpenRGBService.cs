@@ -7,10 +7,19 @@ using ChromaControl.SDK.OpenRGB.Internal;
 namespace ChromaControl.SDK.OpenRGB;
 
 /// <inheritdoc/>
-public class OpenRGBService : IOpenRGBService, IDisposable
+public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 {
-    private readonly OpenRGBManager _openRGBManager = new();
-    private readonly NativeOpenRGBService _openRGBService = new();
+    private readonly OpenRGBManager _openRGBManager;
+    private readonly NativeOpenRGBService _openRGBService;
+
+    /// <summary>
+    /// Creates a <see cref="OpenRGBService"/> instance.
+    /// </summary>
+    public OpenRGBService()
+    {
+        _openRGBManager = new();
+        _openRGBService = new();
+    }
 
     /// <inheritdoc/>
     public async Task StartServiceAsync()
@@ -19,19 +28,22 @@ public class OpenRGBService : IOpenRGBService, IDisposable
 
         await _openRGBService.ConnectAsync();
         await _openRGBService.SetClientNameAsync("Chroma Control");
+        await _openRGBService.RequestProtocolVersionAsync();
     }
 
     /// <inheritdoc/>
     public async Task StopServiceAsync()
     {
-        _openRGBManager.Stop();
+        await _openRGBService.DisposeAsync();
 
-        await Task.Delay(1);
+        _openRGBManager.Stop();
     }
 
     /// <inheritdoc/>
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
+        await _openRGBService.DisposeAsync();
+
         _openRGBManager.Dispose();
 
         GC.SuppressFinalize(this);

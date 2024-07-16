@@ -48,12 +48,15 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
 
             packet = packetId switch
             {
+                PacketId.RequestProtocolVersion => new RequestProtocolVersion() { DeviceIndex = deviceIndex },
                 PacketId.SetClientName => new SetClientName() { DeviceIndex = deviceIndex },
                 PacketId.DeviceListUpdated => new DeviceListUpdated() { DeviceIndex = deviceIndex },
                 _ => throw new ProtocolViolationException("OpenRGB packet id invalid.")
             };
 
-            if (packet.TryParse(packetBody))
+            var reader = new SequenceReader<byte>(packetBody);
+
+            if (packet.TryParse(reader))
             {
                 consumed = packetBody.End;
                 examined = consumed;
@@ -69,7 +72,7 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
     {
         output.Write(Magic);
         output.Write(packet.DeviceIndex);
-        output.Write(packet.PacketId);
+        output.Write(packet.Id);
         output.Write(packet.GetPacketLength());
 
         packet.WriteToBuffer(output);
