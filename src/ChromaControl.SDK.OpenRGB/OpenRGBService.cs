@@ -56,6 +56,8 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     public async Task ResizeZoneAsync(uint deviceIndex, uint zoneIndex, uint size, CancellationToken cancellationToken = default)
     {
         await _service.ResizeZoneAsync(deviceIndex, zoneIndex, size, cancellationToken);
+
+        _service.OnDeviceListUpdated(_service, new());
     }
 
     /// <inheritdoc/>
