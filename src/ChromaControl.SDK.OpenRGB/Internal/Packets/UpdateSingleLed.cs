@@ -4,42 +4,40 @@
 
 using ChromaControl.SDK.OpenRGB.Internal.Enums;
 using ChromaControl.SDK.OpenRGB.Internal.Extensions;
-using ChromaControl.SDK.OpenRGB.Structs;
 using System.Buffers;
+using System.Drawing;
 
 namespace ChromaControl.SDK.OpenRGB.Internal.Packets;
 
-internal struct RequestControllerData : IOpenRGBPacket
+internal struct UpdateSingleLed : IOpenRGBPacket
 {
-    public readonly PacketId Id => PacketId.RequestControllerData;
+    public readonly PacketId Id => PacketId.UpdateSingleLed;
 
     public uint DeviceIndex { get; private set; }
 
-    public readonly uint Length => 4;
+    public readonly uint Length => 8;
 
-    public uint ProtocolVersion { get; private set; }
+    public uint LedIndex { get; private set; }
 
-    public OpenRGBDevice Device { get; private set; }
+    public Color Color { get; private set; }
 
-    public RequestControllerData(uint deviceIndex, uint protocolVersion)
+    public UpdateSingleLed(uint deviceIndex, uint ledIndex, Color color)
     {
         DeviceIndex = deviceIndex;
-        ProtocolVersion = protocolVersion;
+        LedIndex = ledIndex;
+        Color = color;
     }
 
     public bool TryParse(ref SequenceReader<byte> input, uint deviceIndex)
     {
         DeviceIndex = deviceIndex;
 
-        input.Advance(4);
-
-        Device = OpenRGBDevice.Parse(ref input, deviceIndex);
-
         return true;
     }
 
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
-        output.Write(ProtocolVersion);
+        output.Write(LedIndex);
+        output.Write(Color);
     }
 }

@@ -74,6 +74,12 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     }
 
     /// <inheritdoc/>
+    public async Task UpdateSingleLedAsync(int deviceIndex, int ledIndex, Color color, CancellationToken cancellationToken = default)
+    {
+        await _service.UpdateSingleLedAsync((uint)deviceIndex, (uint)ledIndex, color, cancellationToken);
+    }
+
+    /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
         await _service.DisposeAsync();

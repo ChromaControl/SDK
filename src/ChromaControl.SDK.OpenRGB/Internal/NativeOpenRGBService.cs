@@ -67,6 +67,11 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         await _protocol.SendPacketWithoutResponse(new UpdateZoneLeds(deviceIndex, zoneIndex, colors), cancellationToken);
     }
 
+    public async Task UpdateSingleLedAsync(uint deviceIndex, uint ledIndex, Color color, CancellationToken cancellationToken = default)
+    {
+        await _protocol.SendPacketWithoutResponse(new UpdateSingleLed(deviceIndex, ledIndex, color), cancellationToken);
+    }
+
     public ValueTask DisposeAsync()
     {
         return _protocol.DisposeAsync();

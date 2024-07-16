@@ -24,6 +24,11 @@ public struct OpenRGBDevice
     public string Name { get; internal set; }
 
     /// <summary>
+    /// The devices index.
+    /// </summary>
+    public int Index { get; internal set; }
+
+    /// <summary>
     /// The devices vendor.
     /// </summary>
     public string Vendor { get; internal set; }
@@ -67,7 +72,7 @@ public struct OpenRGBDevice
         return Name;
     }
 
-    internal static OpenRGBDevice Parse(ref SequenceReader<byte> input)
+    internal static OpenRGBDevice Parse(ref SequenceReader<byte> input, uint index)
     {
         var type = input.ReadDeviceType();
         var name = input.ReadString();
@@ -88,6 +93,7 @@ public struct OpenRGBDevice
         {
             Type = type,
             Name = name,
+            Index = (int)index,
             Vendor = vendor,
             Description = description,
             Version = version,

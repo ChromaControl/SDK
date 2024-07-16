@@ -13,5 +13,6 @@ internal enum PacketId : uint
     DeviceListUpdated = 100,
     ResizeZone = 1000,
     UpdateLeds = 1050,
-    UpdateZoneLeds = 1051
+    UpdateZoneLeds = 1051,
+    UpdateSingleLed = 1052
 }
