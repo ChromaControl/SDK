@@ -52,4 +52,14 @@ public interface IOpenRGBService
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/>.</returns>
     Task UpdateLedsAsync(uint deviceIndex, Color[] colors, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates zone leds.
+    /// </summary>
+    /// <param name="deviceIndex">The device index.</param>
+    /// <param name="zoneIndex">The zone index.</param>
+    /// <param name="colors">The colors to set.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    Task UpdateZoneLedsAsync(uint deviceIndex, uint zoneIndex, Color[] colors, CancellationToken cancellationToken = default);
 }

@@ -83,6 +83,7 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
                 PacketId.DeviceListUpdated => new DeviceListUpdated(),
                 PacketId.ResizeZone => new ResizeZone(),
                 PacketId.UpdateLeds => new UpdateLeds(),
+                PacketId.UpdateZoneLeds => new UpdateZoneLeds(),
                 _ => throw new ProtocolViolationException("OpenRGB packet id invalid.")
             };
 

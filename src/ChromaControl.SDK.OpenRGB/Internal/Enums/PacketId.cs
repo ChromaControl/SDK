@@ -12,5 +12,6 @@ internal enum PacketId : uint
     SetClientName = 50,
     DeviceListUpdated = 100,
     ResizeZone = 1000,
-    UpdateLeds = 1050
+    UpdateLeds = 1050,
+    UpdateZoneLeds = 1051
 }
