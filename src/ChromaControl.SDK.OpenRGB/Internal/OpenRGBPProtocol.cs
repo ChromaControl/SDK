@@ -21,7 +21,6 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
     private ProtocolReader? _reader;
     private ProtocolWriter? _writer;
     private Task? _readingTask;
-    private CancellationTokenSource? _deviceListUpdatedCancellationTokenSource;
 
     private static ReadOnlySpan<byte> Magic => Encoding.ASCII.GetBytes("ORGB");
 
@@ -35,8 +34,6 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
     {
         _pendingRequests = Enum.GetValues<PacketId>()
             .ToDictionary(id => id, _ => new BlockingCollection<IOpenRGBPacket>());
-
-        _deviceListUpdatedCancellationTokenSource = null;
     }
 
     public async Task StartAsync(SocketConnectionFactory connectionFactory, EndPoint endPoint, CancellationToken cancellationToken = default)
@@ -189,17 +186,7 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
 
             if (packet.Id == PacketId.DeviceListUpdated)
             {
-                _deviceListUpdatedCancellationTokenSource?.Cancel();
-                _deviceListUpdatedCancellationTokenSource = new();
-
-                _ = Task.Delay(1000, _deviceListUpdatedCancellationTokenSource.Token)
-                    .ContinueWith(task =>
-                    {
-                        if (task.IsCompletedSuccessfully)
-                        {
-                            DeviceListUpdated?.Invoke(this, new());
-                        }
-                    });
+                DeviceListUpdated?.Invoke(this, new());
             }
             else
             {

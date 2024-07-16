@@ -17,7 +17,13 @@ public interface IOpenRGBService
     public IReadOnlyList<OpenRGBDevice> Devices { get; }
 
     /// <summary>
-    /// Occurs when the device list is updated.
+    /// Occurs when the <see cref="Devices"/> is updated.
     /// </summary>
     event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
+
+    /// <summary>
+    /// Updates the device list.
+    /// </summary>
+    /// <returns>A <see cref="Task"/>.</returns>
+    Task UpdateDeviceList();
 }

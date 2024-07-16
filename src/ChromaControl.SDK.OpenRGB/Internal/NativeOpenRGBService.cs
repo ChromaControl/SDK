@@ -10,6 +10,8 @@ namespace ChromaControl.SDK.OpenRGB.Internal;
 
 internal sealed class NativeOpenRGBService : IAsyncDisposable
 {
+    private CancellationTokenSource? _deviceListUpdatedCancellationTokenSource;
+
     private readonly SocketConnectionFactory _connectionFactory;
     private readonly OpenRGBPProtocol _protocol;
 
@@ -17,6 +19,7 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
 
     public NativeOpenRGBService()
     {
+        _deviceListUpdatedCancellationTokenSource = null;
         _connectionFactory = new();
         _protocol = new();
 
@@ -63,8 +66,18 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         return _protocol.DisposeAsync();
     }
 
-    private void OnDeviceListUpdated(object? sender, EventArgs e)
+    internal void OnDeviceListUpdated(object? sender, EventArgs e)
     {
-        DeviceListUpdated?.Invoke(sender, e);
+        _deviceListUpdatedCancellationTokenSource?.Cancel();
+        _deviceListUpdatedCancellationTokenSource = new();
+
+        _ = Task.Delay(1000, _deviceListUpdatedCancellationTokenSource.Token)
+            .ContinueWith(task =>
+            {
+                if (task.IsCompletedSuccessfully)
+                {
+                    DeviceListUpdated?.Invoke(sender, e);
+                }
+            });
     }
 }

@@ -10,8 +10,8 @@ namespace ChromaControl.SDK.OpenRGB;
 /// <inheritdoc/>
 public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 {
-    private readonly OpenRGBManager _openRGBManager;
-    private readonly NativeOpenRGBService _openRGBService;
+    private readonly OpenRGBManager _manager;
+    private readonly NativeOpenRGBService _service;
     private readonly List<OpenRGBDevice> _devices;
 
     /// <inheritdoc/>
@@ -25,53 +25,61 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     /// </summary>
     public OpenRGBService()
     {
-        _openRGBManager = new();
-        _openRGBService = new();
+        _manager = new();
+        _service = new();
         _devices = [];
 
-        _openRGBService.DeviceListUpdated += OnDeviceListUpdated;
+        _service.DeviceListUpdated += OnDeviceListUpdated;
+    }
+
+    /// <inheritdoc/>
+    public async Task UpdateDeviceList()
+    {
+        _devices.Clear();
+
+        var controllerCountResult = await _service.RequestControllerCountAsync();
+
+        for (uint i = 0; i < controllerCountResult.Count; i++)
+        {
+            var controllerDataResult = await _service.RequestControllerDataAsync(i);
+
+            _devices.Add(controllerDataResult.Device);
+        }
+
+        DeviceListUpdated?.Invoke(this, Devices);
     }
 
     /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
-        await _openRGBService.DisposeAsync();
+        await _service.DisposeAsync();
 
-        _openRGBManager.Dispose();
+        _manager.Dispose();
 
         GC.SuppressFinalize(this);
     }
 
     internal async Task StartServiceAsync(CancellationToken cancellationToken = default)
     {
-        _openRGBManager.Start();
+        _manager.Start();
 
-        await _openRGBService.ConnectAsync(cancellationToken);
+        await _service.ConnectAsync(cancellationToken);
 
-        await _openRGBService.SetClientNameAsync("Chroma Control", cancellationToken);
-        await _openRGBService.RequestProtocolVersionAsync(cancellationToken);
+        await _service.SetClientNameAsync("Chroma Control", cancellationToken);
+        await _service.RequestProtocolVersionAsync(cancellationToken);
+
+        _service.OnDeviceListUpdated(_service, new());
     }
 
     internal async Task StopServiceAsync()
     {
-        await _openRGBService.DisposeAsync();
+        await _service.DisposeAsync();
 
-        _openRGBManager.Dispose();
+        _manager.Dispose();
     }
 
     private async void OnDeviceListUpdated(object? sender, EventArgs e)
     {
-        _devices.Clear();
-
-        var controllerCountResult = await _openRGBService.RequestControllerCountAsync();
-
-        for (uint i = 0; i < controllerCountResult.Count; i++)
-        {
-            var controllerDataResult = await _openRGBService.RequestControllerDataAsync(i);
-
-            _devices.Add(controllerDataResult.Device);
-        }
-
-        DeviceListUpdated?.Invoke(this, Devices);
+        await UpdateDeviceList();
     }
 }
