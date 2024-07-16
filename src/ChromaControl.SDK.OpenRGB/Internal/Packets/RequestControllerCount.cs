@@ -12,7 +12,9 @@ internal struct RequestControllerCount : IOpenRGBPacket
 {
     public readonly PacketId Id => PacketId.RequestControllerCount;
 
-    public uint DeviceIndex { get; set; }
+    public uint DeviceIndex { get; private set; }
+
+    public readonly uint Length => 0;
 
     public uint Count { get; private set; }
 
@@ -21,17 +23,14 @@ internal struct RequestControllerCount : IOpenRGBPacket
         DeviceIndex = 0;
     }
 
-    public bool TryParse(ref SequenceReader<byte> input)
+    public bool TryParse(ref SequenceReader<byte> input, uint deviceIndex)
     {
+        DeviceIndex = deviceIndex;
+
         Count = input.ReadUInt32();
 
         return true;
     }
 
     public readonly void WriteToBuffer(IBufferWriter<byte> output) { }
-
-    public readonly uint GetPacketLength()
-    {
-        return 0;
-    }
 }

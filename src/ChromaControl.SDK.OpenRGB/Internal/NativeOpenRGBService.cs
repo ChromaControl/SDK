@@ -38,27 +38,22 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
 
     public async Task<RequestControllerData> RequestControllerDataAsync(uint deviceIndex, CancellationToken cancellationToken = default)
     {
-        return await _protocol.SendPacketWithResponse(new RequestControllerData()
-        {
-            DeviceIndex = deviceIndex,
-            ProtocolVersion = OpenRGBConstants.ProtocolVersion
-        }, cancellationToken);
+        return await _protocol.SendPacketWithResponse(new RequestControllerData(deviceIndex, OpenRGBConstants.ProtocolVersion), cancellationToken);
     }
 
     public async Task<RequestProtocolVersion> RequestProtocolVersionAsync(CancellationToken cancellationToken = default)
     {
-        return await _protocol.SendPacketWithResponse(new RequestProtocolVersion
-        {
-            ClientVersion = OpenRGBConstants.ProtocolVersion
-        }, cancellationToken);
+        return await _protocol.SendPacketWithResponse(new RequestProtocolVersion(OpenRGBConstants.ProtocolVersion), cancellationToken);
     }
 
     public async Task SetClientNameAsync(string name, CancellationToken cancellationToken = default)
     {
-        await _protocol.SendPacketWithoutResponse(new SetClientName()
-        {
-            Name = name
-        }, cancellationToken);
+        await _protocol.SendPacketWithoutResponse(new SetClientName(name), cancellationToken);
+    }
+
+    public async Task ResizeZoneAsync(uint deviceIndex, uint zoneIndex, uint size, CancellationToken cancellationToken = default)
+    {
+        await _protocol.SendPacketWithoutResponse(new ResizeZone(deviceIndex, zoneIndex, size), cancellationToken);
     }
 
     public ValueTask DisposeAsync()

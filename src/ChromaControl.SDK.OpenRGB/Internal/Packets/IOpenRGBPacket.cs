@@ -11,11 +11,11 @@ internal interface IOpenRGBPacket
 {
     PacketId Id { get; }
 
-    uint DeviceIndex { get; set; }
+    uint DeviceIndex { get; }
 
-    bool TryParse(ref SequenceReader<byte> input);
+    uint Length { get; }
+
+    bool TryParse(ref SequenceReader<byte> input, uint deviceIndex);
 
     void WriteToBuffer(IBufferWriter<byte> output);
-
-    uint GetPacketLength();
 }

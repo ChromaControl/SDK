@@ -36,20 +36,26 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     }
 
     /// <inheritdoc/>
-    public async Task UpdateDeviceList()
+    public async Task UpdateDeviceListAsync(CancellationToken cancellationToken = default)
     {
         _devices.Clear();
 
-        var controllerCountResult = await _service.RequestControllerCountAsync();
+        var controllerCountResult = await _service.RequestControllerCountAsync(cancellationToken);
 
         for (uint i = 0; i < controllerCountResult.Count; i++)
         {
-            var controllerDataResult = await _service.RequestControllerDataAsync(i);
+            var controllerDataResult = await _service.RequestControllerDataAsync(i, cancellationToken);
 
             _devices.Add(controllerDataResult.Device);
         }
 
         DeviceListUpdated?.Invoke(this, Devices);
+    }
+
+    /// <inheritdoc/>
+    public async Task ResizeZoneAsync(uint deviceIndex, uint zoneIndex, uint size, CancellationToken cancellationToken = default)
+    {
+        await _service.ResizeZoneAsync(deviceIndex, zoneIndex, size, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -83,7 +89,7 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 
     private async void OnDeviceListUpdated(object? sender, EventArgs e)
     {
-        await UpdateDeviceList();
+        await UpdateDeviceListAsync();
 
         Started = true;
     }

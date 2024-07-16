@@ -11,22 +11,21 @@ internal struct DeviceListUpdated : IOpenRGBPacket
 {
     public readonly PacketId Id => PacketId.DeviceListUpdated;
 
-    public uint DeviceIndex { get; set; }
+    public uint DeviceIndex { get; private set; }
+
+    public readonly uint Length => 0;
 
     public DeviceListUpdated()
     {
         DeviceIndex = 0;
     }
 
-    public readonly bool TryParse(ref SequenceReader<byte> input)
+    public bool TryParse(ref SequenceReader<byte> input, uint deviceIndex)
     {
+        DeviceIndex = deviceIndex;
+
         return true;
     }
 
     public readonly void WriteToBuffer(IBufferWriter<byte> output) { }
-
-    public readonly uint GetPacketLength()
-    {
-        return 0;
-    }
 }

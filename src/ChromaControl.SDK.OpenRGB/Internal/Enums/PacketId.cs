@@ -10,5 +10,6 @@ internal enum PacketId : uint
     RequestControllerData = 1,
     RequestProtocolVersion = 40,
     SetClientName = 50,
-    DeviceListUpdated = 100
+    DeviceListUpdated = 100,
+    ResizeZone = 1000
 }

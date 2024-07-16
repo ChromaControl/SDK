@@ -76,17 +76,18 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
 
             packet = packetId switch
             {
-                PacketId.RequestControllerCount => new RequestControllerCount() { DeviceIndex = deviceIndex },
-                PacketId.RequestControllerData => new RequestControllerData() { DeviceIndex = deviceIndex },
-                PacketId.RequestProtocolVersion => new RequestProtocolVersion() { DeviceIndex = deviceIndex },
-                PacketId.SetClientName => new SetClientName() { DeviceIndex = deviceIndex },
-                PacketId.DeviceListUpdated => new DeviceListUpdated() { DeviceIndex = deviceIndex },
+                PacketId.RequestControllerCount => new RequestControllerCount(),
+                PacketId.RequestControllerData => new RequestControllerData(),
+                PacketId.RequestProtocolVersion => new RequestProtocolVersion(),
+                PacketId.SetClientName => new SetClientName(),
+                PacketId.DeviceListUpdated => new DeviceListUpdated(),
+                PacketId.ResizeZone => new ResizeZone(),
                 _ => throw new ProtocolViolationException("OpenRGB packet id invalid.")
             };
 
             var reader = new SequenceReader<byte>(packetBody);
 
-            if (packet.TryParse(ref reader))
+            if (packet.TryParse(ref reader, deviceIndex))
             {
                 consumed = packetBody.End;
                 examined = consumed;
@@ -103,7 +104,7 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
         output.Write(Magic);
         output.Write(packet.DeviceIndex);
         output.Write(packet.Id);
-        output.Write(packet.GetPacketLength());
+        output.Write(packet.Length);
 
         packet.WriteToBuffer(output);
     }

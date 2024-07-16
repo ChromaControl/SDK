@@ -29,6 +29,17 @@ public interface IOpenRGBService
     /// <summary>
     /// Updates the device list.
     /// </summary>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/>.</returns>
-    Task UpdateDeviceList();
+    Task UpdateDeviceListAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Resizes a zone.
+    /// </summary>
+    /// <param name="deviceIndex">The device index.</param>
+    /// <param name="zoneIndex">The zone index.</param>
+    /// <param name="size">The new size.</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    Task ResizeZoneAsync(uint deviceIndex, uint zoneIndex, uint size, CancellationToken cancellationToken = default);
 }

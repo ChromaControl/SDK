@@ -3,24 +3,28 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.OpenRGB.Internal.Enums;
+using ChromaControl.SDK.OpenRGB.Internal.Extensions;
 using System.Buffers;
-using System.Text;
 
 namespace ChromaControl.SDK.OpenRGB.Internal.Packets;
 
-internal struct SetClientName : IOpenRGBPacket
+internal struct ResizeZone : IOpenRGBPacket
 {
-    public readonly PacketId Id => PacketId.SetClientName;
+    public readonly PacketId Id => PacketId.ResizeZone;
 
     public uint DeviceIndex { get; private set; }
 
-    public readonly uint Length => (uint)Encoding.ASCII.GetByteCount(Name) + 1;
+    public readonly uint Length => 8;
 
-    public string Name { get; private set; }
+    public uint ZoneIndex { get; private set; }
 
-    public SetClientName(string name)
+    public uint Size { get; private set; }
+
+    public ResizeZone(uint deviceIndex, uint zoneIndex, uint size)
     {
-        Name = name;
+        DeviceIndex = deviceIndex;
+        ZoneIndex = zoneIndex;
+        Size = size;
     }
 
     public bool TryParse(ref SequenceReader<byte> input, uint deviceIndex)
@@ -32,6 +36,7 @@ internal struct SetClientName : IOpenRGBPacket
 
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
-        output.Write(Encoding.ASCII.GetBytes($"{Name}\0"));
+        output.Write(ZoneIndex);
+        output.Write(Size);
     }
 }

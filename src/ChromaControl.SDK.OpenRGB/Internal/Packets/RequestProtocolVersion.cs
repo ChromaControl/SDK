@@ -12,9 +12,11 @@ internal struct RequestProtocolVersion : IOpenRGBPacket
 {
     public readonly PacketId Id => PacketId.RequestProtocolVersion;
 
-    public uint DeviceIndex { get; set; }
+    public uint DeviceIndex { get; private set; }
 
-    public uint ClientVersion { get; set; }
+    public readonly uint Length => 4;
+
+    public uint ClientVersion { get; private set; }
 
     public uint ServerVersion { get; private set; }
 
@@ -24,8 +26,10 @@ internal struct RequestProtocolVersion : IOpenRGBPacket
         ClientVersion = clientVersion;
     }
 
-    public bool TryParse(ref SequenceReader<byte> input)
+    public bool TryParse(ref SequenceReader<byte> input, uint deviceIndex)
     {
+        DeviceIndex = deviceIndex;
+
         ServerVersion = input.ReadUInt32();
 
         return true;
@@ -34,10 +38,5 @@ internal struct RequestProtocolVersion : IOpenRGBPacket
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
         output.Write(ClientVersion);
-    }
-
-    public readonly uint GetPacketLength()
-    {
-        return 4;
     }
 }

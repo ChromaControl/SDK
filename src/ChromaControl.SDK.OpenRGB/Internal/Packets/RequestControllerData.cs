@@ -13,9 +13,11 @@ internal struct RequestControllerData : IOpenRGBPacket
 {
     public readonly PacketId Id => PacketId.RequestControllerData;
 
-    public uint DeviceIndex { get; set; }
+    public uint DeviceIndex { get; private set; }
 
-    public uint ProtocolVersion { get; set; }
+    public readonly uint Length => 4;
+
+    public uint ProtocolVersion { get; private set; }
 
     public OpenRGBDevice Device { get; private set; }
 
@@ -25,9 +27,11 @@ internal struct RequestControllerData : IOpenRGBPacket
         ProtocolVersion = protocolVersion;
     }
 
-    public bool TryParse(ref SequenceReader<byte> input)
+    public bool TryParse(ref SequenceReader<byte> input, uint deviceIndex)
     {
-        _ = input.ReadUInt32();
+        DeviceIndex = deviceIndex;
+
+        input.Advance(4);
 
         Device = OpenRGBDevice.Parse(ref input);
 
@@ -37,10 +41,5 @@ internal struct RequestControllerData : IOpenRGBPacket
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
         output.Write(ProtocolVersion);
-    }
-
-    public readonly uint GetPacketLength()
-    {
-        return 4;
     }
 }
