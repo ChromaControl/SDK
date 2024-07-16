@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.Synapse.Enums;
-using ChromaControl.SDK.Synapse.Structs;
+using System.Drawing;
 
 namespace ChromaControl.SDK.Synapse;
 
@@ -28,20 +28,7 @@ public interface ISynapseService
     event EventHandler<SynapseStatus>? StatusChanged;
 
     /// <summary>
-    /// Occurs when an effect is received.
+    /// Occurs when color data is received.
     /// </summary>
-    event EventHandler<SynapseEffect>? EffectReceived;
-
-    /// <summary>
-    /// Starts the Synapse service.
-    /// </summary>
-    /// <param name="appId">Application Id for authentication.</param>
-    /// <returns>A <see cref="SynapseResult"/>.</returns>
-    SynapseResult StartService(in Guid appId);
-
-    /// <summary>
-    /// Stops the Synapse service.
-    /// </summary>
-    /// <returns>A <see cref="SynapseResult"/>.</returns>
-    SynapseResult StopService();
+    event EventHandler<Color[]>? ColorsReceived;
 }

@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.Synapse.Enums;
-using ChromaControl.SDK.Synapse.Structs;
 using System.Drawing;
 
 namespace ChromaControl.SDK.Synapse.Sample;
@@ -11,78 +10,62 @@ namespace ChromaControl.SDK.Synapse.Sample;
 /// <summary>
 /// The worker.
 /// </summary>
-public partial class Worker : IHostedService
+public partial class Worker : BackgroundService
 {
+    private bool _serviceReady;
+    private Color _cachedColor;
+
     private readonly ILogger<Worker> _logger;
-    private readonly ISynapseService _synapse;
+    private readonly ISynapseService _service;
 
-    private Color _colorCache;
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Starting Synapse Service...")]
-    private static partial void LogStartMessage(ILogger logger);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Stopping Synapse Service...")]
-    private static partial void LogStopMessage(ILogger logger);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Synapse Status Changed To {status}")]
-    private static partial void LogStatusMessage(ILogger logger, SynapseStatus status);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Synapse Color Set To [{r}, {g}, {b}]")]
-    private static partial void LogEffectMessage(ILogger logger, byte r, byte g, byte b);
+    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Color changed to [R = {r}, G = {g}, B = {b}]")]
+    private static partial void LogColorChangedMessage(ILogger logger, byte r, byte g, byte b);
 
     /// <summary>
     /// Creates a <see cref="Worker"/> instance.
     /// </summary>
     /// <param name="logger">The <see cref="ILogger{TCategoryName}"/>.</param>
-    /// <param name="synapse">The <see cref="ISynapseService"/>.</param>
-    public Worker(ILogger<Worker> logger, ISynapseService synapse)
+    /// <param name="service">The <see cref="ISynapseService"/>.</param>
+    public Worker(ILogger<Worker> logger, ISynapseService service)
     {
         _logger = logger;
-        _synapse = synapse;
-        _synapse.StatusChanged += StatusChanged;
-        _synapse.EffectReceived += EffectReceived;
+        _service = service;
+
+        _service.StatusChanged += OnStatusChanged;
+        _service.ColorsReceived += OnColorsReceived;
     }
 
-    /// <summary>
-    /// Starts the worker.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <returns>A <see cref="Task"/> representing the worker starting.</returns>
-    public Task StartAsync(CancellationToken cancellationToken)
+    /// <inheritdoc/>
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        LogStartMessage(_logger);
+        var currentColor = _cachedColor;
 
-        _synapse.StartService(new("00000000-0000-0000-0000-000000000000"));
-
-        return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Stops the worker.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <returns>A <see cref="Task"/> representing the worker stopping.</returns>
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        LogStopMessage(_logger);
-
-        _synapse.StopService();
-
-        return Task.CompletedTask;
-    }
-
-    private void StatusChanged(object? sender, SynapseStatus e)
-    {
-        LogStatusMessage(_logger, e);
-    }
-
-    private void EffectReceived(object? sender, SynapseEffect e)
-    {
-        if (_colorCache != e.Color1)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            _colorCache = e.Color1;
+            if (!_serviceReady)
+            {
+                await Task.Delay(1000, stoppingToken);
+                continue;
+            }
 
-            LogEffectMessage(_logger, e.Color1.R, e.Color1.G, e.Color1.B);
+            if (currentColor != _cachedColor)
+            {
+                currentColor = _cachedColor;
+
+                LogColorChangedMessage(_logger, currentColor.R, currentColor.G, currentColor.B);
+            }
+
+            await Task.Delay(1000, stoppingToken);
         }
+    }
+
+    private void OnStatusChanged(object? sender, SynapseStatus e)
+    {
+        _serviceReady = true;
+    }
+
+    private void OnColorsReceived(object? sender, Color[] e)
+    {
+        _cachedColor = e[0];
     }
 }

@@ -5,10 +5,7 @@
 using ChromaControl.SDK.Synapse.Enums;
 using ChromaControl.SDK.Synapse.Internal;
 using ChromaControl.SDK.Synapse.Internal.Enums;
-using ChromaControl.SDK.Synapse.Structs;
 using System.Drawing;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace ChromaControl.SDK.Synapse;
 
@@ -25,7 +22,7 @@ public partial class SynapseService : ISynapseService
     public event EventHandler<SynapseStatus>? StatusChanged;
 
     /// <inheritdoc/>
-    public event EventHandler<SynapseEffect>? EffectReceived;
+    public event EventHandler<Color[]>? ColorsReceived;
 
     private NativeSynapseService.RegisterEventNotificationCallback RegisterEventNotificationCallbackState { get; set; }
 
@@ -37,8 +34,7 @@ public partial class SynapseService : ISynapseService
         RegisterEventNotificationCallbackState = new(OnEventNotification);
     }
 
-    /// <inheritdoc/>
-    public SynapseResult StartService(in Guid appId)
+    internal SynapseResult StartService(in Guid appId)
     {
         var initResult = NativeSynapseService.Init(appId);
 
@@ -57,8 +53,7 @@ public partial class SynapseService : ISynapseService
         return registerResult;
     }
 
-    /// <inheritdoc/>
-    public SynapseResult StopService()
+    internal SynapseResult StopService()
     {
         var unRegisterResult = NativeSynapseService.UnRegisterEventNotification();
 
@@ -78,23 +73,22 @@ public partial class SynapseService : ISynapseService
         return unInitResult;
     }
 
-    private SynapseResult OnEventNotification(SynapseEventType type, nint pData)
+    private unsafe SynapseResult OnEventNotification(SynapseEventType type, nint pData)
     {
         if (type == SynapseEventType.Effect)
         {
-            var effectDataPtr = Unsafe.AddByteOffset(ref Unsafe.NullRef<int>(), pData);
-            var effectData = MemoryMarshal.CreateSpan(ref effectDataPtr, 5);
+            var span = new ReadOnlySpan<byte>(pData.ToPointer(), 20);
 
-            var effect = new SynapseEffect
+            var colors = new Color[]
             {
-                Color1 = Color.FromArgb((effectData[0] >> 0) & 0xff, (effectData[0] >> 8) & 0xff, (effectData[0] >> 16) & 0xff),
-                Color2 = Color.FromArgb((effectData[1] >> 0) & 0xff, (effectData[1] >> 8) & 0xff, (effectData[1] >> 16) & 0xff),
-                Color3 = Color.FromArgb((effectData[2] >> 0) & 0xff, (effectData[2] >> 8) & 0xff, (effectData[2] >> 16) & 0xff),
-                Color4 = Color.FromArgb((effectData[3] >> 0) & 0xff, (effectData[3] >> 8) & 0xff, (effectData[3] >> 16) & 0xff),
-                Color5 = Color.FromArgb((effectData[4] >> 0) & 0xff, (effectData[4] >> 8) & 0xff, (effectData[4] >> 16) & 0xff)
+                Color.FromArgb(span[3], span[0], span[1], span[2]),
+                Color.FromArgb(span[7], span[4], span[5], span[6]),
+                Color.FromArgb(span[11], span[8], span[9], span[10]),
+                Color.FromArgb(span[15], span[12], span[13], span[14]),
+                Color.FromArgb(span[10], span[16], span[17], span[18]),
             };
 
-            EffectReceived?.Invoke(this, effect);
+            ColorsReceived?.Invoke(this, colors);
         }
         else if (type == SynapseEventType.Status)
         {

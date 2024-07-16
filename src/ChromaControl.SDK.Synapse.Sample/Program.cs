@@ -8,6 +8,7 @@ using ChromaControl.SDK.Synapse.Sample;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddSynapseSDK();
+
 builder.Services.AddHostedService<Worker>();
 
 await builder.Build().RunAsync();
