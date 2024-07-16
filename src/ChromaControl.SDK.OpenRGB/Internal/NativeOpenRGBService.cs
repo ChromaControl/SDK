@@ -47,34 +47,34 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         _readingTask = ProcessReadAsync();
     }
 
-    public async Task<RequestControllerCount> RequestControllerCountAsync()
+    public async Task<RequestControllerCount> RequestControllerCountAsync(CancellationToken cancellationToken = default)
     {
-        return await SendPacketWithResponse(new RequestControllerCount());
+        return await SendPacketWithResponse(new RequestControllerCount(), cancellationToken);
     }
 
-    public async Task<RequestControllerData> RequestControllerDataAsync(uint deviceIndex)
+    public async Task<RequestControllerData> RequestControllerDataAsync(uint deviceIndex, CancellationToken cancellationToken = default)
     {
         return await SendPacketWithResponse(new RequestControllerData()
         {
             DeviceIndex = deviceIndex,
             ProtocolVersion = OpenRGBConstants.ProtocolVersion
-        });
+        }, cancellationToken);
     }
 
-    public async Task<RequestProtocolVersion> RequestProtocolVersionAsync()
+    public async Task<RequestProtocolVersion> RequestProtocolVersionAsync(CancellationToken cancellationToken = default)
     {
         return await SendPacketWithResponse(new RequestProtocolVersion
         {
             ClientVersion = OpenRGBConstants.ProtocolVersion
-        });
+        }, cancellationToken);
     }
 
-    public async Task SetClientNameAsync(string name)
+    public async Task SetClientNameAsync(string name, CancellationToken cancellationToken = default)
     {
         await SendPacketWithoutResponse(new SetClientName()
         {
             Name = name
-        });
+        }, cancellationToken);
     }
 
     public async ValueTask DisposeAsync()
@@ -149,23 +149,23 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         }
     }
 
-    private async Task SendPacketWithoutResponse(IOpenRGBPacket packet)
+    private async Task SendPacketWithoutResponse(IOpenRGBPacket packet, CancellationToken cancellationToken = default)
     {
         if (_writer is null)
         {
             throw new InvalidOperationException("ConnectAsync must be called first.");
         }
 
-        await _writer.WriteAsync(_protocol, packet);
+        await _writer.WriteAsync(_protocol, packet, cancellationToken);
     }
 
-    private async Task<TPacket> SendPacketWithResponse<TPacket>(TPacket packet) where TPacket : IOpenRGBPacket
+    private async Task<TPacket> SendPacketWithResponse<TPacket>(TPacket packet, CancellationToken cancellationToken = default) where TPacket : IOpenRGBPacket
     {
-        await SendPacketWithoutResponse(packet);
+        await SendPacketWithoutResponse(packet, cancellationToken);
 
         var result = await Task.Run(() =>
         {
-            if (!_pendingRequests[packet.Id].TryTake(out var result, 1000))
+            if (!_pendingRequests[packet.Id].TryTake(out var result, 1000, cancellationToken))
             {
                 throw new TimeoutException($"OpenRGB did not reply to {packet.Id} in the required amount of time.");
             }

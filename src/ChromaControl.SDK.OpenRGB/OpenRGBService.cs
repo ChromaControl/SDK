@@ -48,8 +48,8 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 
         await _openRGBService.ConnectAsync(cancellationToken);
 
-        await _openRGBService.SetClientNameAsync("Chroma Control");
-        await _openRGBService.RequestProtocolVersionAsync();
+        await _openRGBService.SetClientNameAsync("Chroma Control", cancellationToken);
+        await _openRGBService.RequestProtocolVersionAsync(cancellationToken);
     }
 
     internal async Task StopServiceAsync()
@@ -57,8 +57,6 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         await _openRGBService.DisposeAsync();
 
         _openRGBManager.Dispose();
-
-        _openRGBManager.Stop();
     }
 
     private async void OnDeviceListUpdated(object? sender, EventArgs e)
