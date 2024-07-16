@@ -12,6 +12,11 @@ namespace ChromaControl.SDK.OpenRGB;
 public interface IOpenRGBService
 {
     /// <summary>
+    /// Occurs when the device list is updated.
+    /// </summary>
+    event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
+
+    /// <summary>
     /// The devices available in OpenRGB.
     /// </summary>
     public IReadOnlyList<OpenRGBDevice> Devices { get; }

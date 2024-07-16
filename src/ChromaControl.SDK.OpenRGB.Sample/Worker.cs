@@ -27,6 +27,12 @@ public partial class Worker : IHostedService
     {
         _logger = logger;
         _openRGB = openRGB;
+        _openRGB.DeviceListUpdated += OnDeviceListUpdated;
+    }
+
+    private void OnDeviceListUpdated(object? sender, IReadOnlyList<Structs.OpenRGBDevice> e)
+    {
+        Console.WriteLine();
     }
 
     /// <summary>

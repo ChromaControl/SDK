@@ -7,7 +7,6 @@ using ChromaControl.SDK.OpenRGB.Internal.Extensions;
 using ChromaControl.SDK.OpenRGB.Internal.Packets;
 using ChromaControl.SDK.OpenRGB.Internal.Protocol;
 using ChromaControl.SDK.OpenRGB.Internal.Sockets;
-using ChromaControl.SDK.OpenRGB.Structs;
 using Microsoft.AspNetCore.Connections;
 using System.Collections.Concurrent;
 using System.Net;
@@ -16,8 +15,6 @@ namespace ChromaControl.SDK.OpenRGB.Internal;
 
 internal sealed class NativeOpenRGBService : IAsyncDisposable
 {
-    public List<OpenRGBDevice> Devices { get; } = [];
-
     private ConnectionContext? _connection;
     private ProtocolReader? _reader;
     private ProtocolWriter? _writer;
@@ -28,7 +25,7 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
     private readonly OpenRGBPProtocol _protocol;
     private readonly Dictionary<PacketId, BlockingCollection<IOpenRGBPacket>> _pendingRequests;
 
-    private event EventHandler DeviceListUpdated;
+    public event EventHandler? DeviceListUpdated;
 
     public NativeOpenRGBService()
     {
@@ -37,8 +34,6 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         _pendingRequests = Enum.GetValues<PacketId>()
             .ToDictionary(id => id, _ => new BlockingCollection<IOpenRGBPacket>());
         _deviceListUpdatedCancellationTokenSource = null;
-
-        DeviceListUpdated += OnDeviceListUpdated;
     }
 
     public async Task ConnectAsync(CancellationToken cancellationToken = default)
@@ -109,20 +104,6 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         await _connection.DisposeAsync().ConfigureAwait(false);
     }
 
-    private async void OnDeviceListUpdated(object? sender, EventArgs e)
-    {
-        Devices.Clear();
-
-        var controllerCountResult = await RequestControllerCountAsync();
-
-        for (uint i = 0; i < controllerCountResult.Count; i++)
-        {
-            var controllerDataResult = await RequestControllerDataAsync(i);
-
-            Devices.Add(controllerDataResult.Device);
-        }
-    }
-
     private async Task ProcessReadAsync()
     {
         if (_reader is null)
@@ -155,7 +136,7 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
                     {
                         if (task.IsCompletedSuccessfully)
                         {
-                            DeviceListUpdated.Invoke(this, new());
+                            DeviceListUpdated?.Invoke(this, new());
                         }
                     });
             }
