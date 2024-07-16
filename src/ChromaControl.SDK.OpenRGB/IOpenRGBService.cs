@@ -7,29 +7,17 @@ using ChromaControl.SDK.OpenRGB.Structs;
 namespace ChromaControl.SDK.OpenRGB;
 
 /// <summary>
-/// The OpenRGB Service.
+/// The OpenRGB service.
 /// </summary>
 public interface IOpenRGBService
 {
-    /// <summary>
-    /// Occurs when the device list is updated.
-    /// </summary>
-    event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
-
     /// <summary>
     /// The devices available in OpenRGB.
     /// </summary>
     public IReadOnlyList<OpenRGBDevice> Devices { get; }
 
     /// <summary>
-    /// Starts the OpenRGB service.
+    /// Occurs when the device list is updated.
     /// </summary>
-    /// <returns>A <see cref="Task"/>.</returns>
-    Task StartServiceAsync();
-
-    /// <summary>
-    /// Stopes the OpenRGB service.
-    /// </summary>
-    /// <returns>A <see cref="Task"/>.</returns>
-    Task StopServiceAsync();
+    event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
 }

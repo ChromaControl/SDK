@@ -13,7 +13,7 @@ namespace ChromaControl.SDK.OpenRGB.Hosting;
 public partial class OpenRGBHostService : IHostedService
 {
     private readonly ILogger<OpenRGBHostService> _logger;
-    private readonly IOpenRGBService _openRGB;
+    private readonly OpenRGBService _openRGB;
 
     [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "OpenRGB SDK is starting up...")]
     private static partial void LogStartMessage(ILogger logger);
@@ -29,7 +29,7 @@ public partial class OpenRGBHostService : IHostedService
     public OpenRGBHostService(ILogger<OpenRGBHostService> logger, IOpenRGBService openRGB)
     {
         _logger = logger;
-        _openRGB = openRGB;
+        _openRGB = (OpenRGBService)openRGB;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public partial class OpenRGBHostService : IHostedService
     {
         LogStartMessage(_logger);
 
-        await _openRGB.StartServiceAsync();
+        await _openRGB.StartServiceAsync(cancellationToken);
     }
 
     /// <summary>

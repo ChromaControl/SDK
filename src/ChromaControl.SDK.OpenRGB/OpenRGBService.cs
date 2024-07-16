@@ -15,10 +15,10 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     private readonly List<OpenRGBDevice> _devices;
 
     /// <inheritdoc/>
-    public event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
+    public IReadOnlyList<OpenRGBDevice> Devices => _devices.AsReadOnly();
 
     /// <inheritdoc/>
-    public IReadOnlyList<OpenRGBDevice> Devices => _devices.AsReadOnly();
+    public event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
 
     /// <summary>
     /// Creates a <see cref="OpenRGBService"/> instance.
@@ -33,24 +33,6 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     }
 
     /// <inheritdoc/>
-    public async Task StartServiceAsync()
-    {
-        _openRGBManager.Start();
-
-        await _openRGBService.ConnectAsync();
-        await _openRGBService.SetClientNameAsync("Chroma Control");
-        await _openRGBService.RequestProtocolVersionAsync();
-    }
-
-    /// <inheritdoc/>
-    public async Task StopServiceAsync()
-    {
-        await _openRGBService.DisposeAsync();
-
-        _openRGBManager.Stop();
-    }
-
-    /// <inheritdoc/>
     public async ValueTask DisposeAsync()
     {
         await _openRGBService.DisposeAsync();
@@ -58,6 +40,25 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         _openRGBManager.Dispose();
 
         GC.SuppressFinalize(this);
+    }
+
+    internal async Task StartServiceAsync(CancellationToken cancellationToken = default)
+    {
+        _openRGBManager.Start();
+
+        await _openRGBService.ConnectAsync(cancellationToken);
+
+        await _openRGBService.SetClientNameAsync("Chroma Control");
+        await _openRGBService.RequestProtocolVersionAsync();
+    }
+
+    internal async Task StopServiceAsync()
+    {
+        await _openRGBService.DisposeAsync();
+
+        _openRGBManager.Dispose();
+
+        _openRGBManager.Stop();
     }
 
     private async void OnDeviceListUpdated(object? sender, EventArgs e)
