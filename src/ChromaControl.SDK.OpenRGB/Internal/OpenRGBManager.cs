@@ -124,9 +124,7 @@ internal sealed partial class OpenRGBManager : IDisposable
 
     private static string FindExecutablePath()
     {
-        var assembly = typeof(OpenRGBManager).Assembly;
-        var assemblyFilePath = assembly.Location;
-        var assemblyPath = Path.GetDirectoryName(assemblyFilePath) ?? throw new FileNotFoundException("Unable to find the OpenRGB executable.");
+        var assemblyPath = AppContext.BaseDirectory;
         var runtimeIdentifier = Is32Bit ? "win-x86" : "win-x64";
 
         var searchPaths = new List<string>()

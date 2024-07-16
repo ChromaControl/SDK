@@ -2,6 +2,7 @@
 // The Chroma Control Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using ChromaControl.SDK.OpenRGB.Extensions;
 using ChromaControl.SDK.OpenRGB.Structs;
 using System.Drawing;
 
@@ -59,21 +60,18 @@ public partial class Worker : BackgroundService
                 currentColor = Color.Red;
             }
 
-            LogColorChangeMessage(_logger, currentColor.R, currentColor.G, currentColor.B);
+            //LogColorChangeMessage(_logger, currentColor.R, currentColor.G, currentColor.B);
 
             foreach (var device in _service.Devices)
             {
-                var buffer = new Color[device.Leds.Length];
+                var buffer = device.CreateColorBuffer();
 
-                for (var i = 0; i < buffer.Length; i++)
-                {
-                    buffer[i] = currentColor;
-                }
+                buffer.Fill(currentColor);
 
-                await _service.UpdateLedsAsync(device.Index, buffer, stoppingToken);
+                //await _service.UpdateLedsAsync(device.Index, buffer, stoppingToken);
             }
 
-            await Task.Delay(1000, stoppingToken);
+            await Task.Delay(1, stoppingToken);
         }
     }
 

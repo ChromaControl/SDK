@@ -5,6 +5,7 @@
 using ChromaControl.SDK.OpenRGB.Enums;
 using ChromaControl.SDK.OpenRGB.Internal.Extensions;
 using System.Buffers;
+using System.Drawing;
 
 namespace ChromaControl.SDK.OpenRGB.Structs;
 
@@ -52,6 +53,15 @@ public struct OpenRGBZone
     /// The zones segments.
     /// </summary>
     public OpenRGBSegment[] Segments { get; internal set; }
+
+    /// <summary>
+    /// Creates a <see cref="Color"/> buffer of the appropriate size for this zone.
+    /// </summary>
+    /// <returns>A <see cref="Color"/> <see cref="Array"/>.</returns>
+    public readonly Color[] CreateColorBuffer()
+    {
+        return new Color[LedCount];
+    }
 
     /// <summary>
     /// Converts this <see cref="OpenRGBZone"/> into a string representation.

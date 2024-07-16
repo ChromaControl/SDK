@@ -5,6 +5,7 @@
 using ChromaControl.SDK.OpenRGB.Enums;
 using ChromaControl.SDK.OpenRGB.Internal.Extensions;
 using System.Buffers;
+using System.Drawing;
 
 namespace ChromaControl.SDK.OpenRGB.Structs;
 
@@ -62,6 +63,15 @@ public struct OpenRGBDevice
     /// The devices leds.
     /// </summary>
     public OpenRGBLed[] Leds { get; internal set; }
+
+    /// <summary>
+    /// Creates a <see cref="Color"/> buffer of the appropriate size for this device.
+    /// </summary>
+    /// <returns>A <see cref="Color"/> <see cref="Array"/>.</returns>
+    public readonly Color[] CreateColorBuffer()
+    {
+        return new Color[Leds.Length];
+    }
 
     /// <summary>
     /// Converts this <see cref="OpenRGBDevice"/> into a string representation.

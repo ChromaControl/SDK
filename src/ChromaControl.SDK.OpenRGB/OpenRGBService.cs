@@ -62,9 +62,27 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     }
 
     /// <inheritdoc/>
+    public Task ResizeZoneAsync(OpenRGBDevice device, int zoneIndex, int size, CancellationToken cancellationToken = default)
+    {
+        return ResizeZoneAsync(device.Index, zoneIndex, size, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task ResizeZoneAsync(OpenRGBDevice device, OpenRGBZone zone, int size, CancellationToken cancellationToken = default)
+    {
+        return ResizeZoneAsync(device.Index, zone.Index, size, cancellationToken);
+    }
+
+    /// <inheritdoc/>
     public async Task UpdateLedsAsync(int deviceIndex, Color[] colors, CancellationToken cancellationToken = default)
     {
         await _service.UpdateLedsAsync((uint)deviceIndex, colors, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task UpdateLedsAsync(OpenRGBDevice device, Color[] colors, CancellationToken cancellationToken = default)
+    {
+        return UpdateLedsAsync(device.Index, colors, cancellationToken);
     }
 
     /// <inheritdoc/>
@@ -74,9 +92,33 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     }
 
     /// <inheritdoc/>
+    public Task UpdateZoneLedsAsync(OpenRGBDevice device, int zoneIndex, Color[] colors, CancellationToken cancellationToken = default)
+    {
+        return UpdateZoneLedsAsync(device.Index, zoneIndex, colors, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task UpdateZoneLedsAsync(OpenRGBDevice device, OpenRGBZone zone, Color[] colors, CancellationToken cancellationToken = default)
+    {
+        return UpdateZoneLedsAsync(device.Index, zone.Index, colors, cancellationToken);
+    }
+
+    /// <inheritdoc/>
     public async Task UpdateSingleLedAsync(int deviceIndex, int ledIndex, Color color, CancellationToken cancellationToken = default)
     {
         await _service.UpdateSingleLedAsync((uint)deviceIndex, (uint)ledIndex, color, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task UpdateSingleLedAsync(OpenRGBDevice device, int ledIndex, Color color, CancellationToken cancellationToken = default)
+    {
+        return UpdateSingleLedAsync(device.Index, ledIndex, color, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public Task UpdateSingleLedAsync(OpenRGBDevice device, OpenRGBLed led, Color color, CancellationToken cancellationToken = default)
+    {
+        return UpdateSingleLedAsync(device.Index, led.Index, color, cancellationToken);
     }
 
     /// <inheritdoc/>
