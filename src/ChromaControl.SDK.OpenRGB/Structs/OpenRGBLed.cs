@@ -22,6 +22,15 @@ public struct OpenRGBLed
     /// </summary>
     public uint Index { get; internal set; }
 
+    /// <summary>
+    /// Converts this <see cref="OpenRGBLed"/>
+    /// </summary>
+    /// <returns>A string representation of this <see cref="OpenRGBLed"/>.</returns>
+    public override readonly string ToString()
+    {
+        return Name;
+    }
+
     internal static OpenRGBLed Parse(ref SequenceReader<byte> input, uint index)
     {
         var name = input.ReadString();

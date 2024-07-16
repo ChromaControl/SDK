@@ -53,6 +53,15 @@ public struct OpenRGBDevice
     /// </summary>
     public OpenRGBLed[] Leds { get; internal set; }
 
+    /// <summary>
+    /// Converts this <see cref="OpenRGBDevice"/>
+    /// </summary>
+    /// <returns>A string representation of this <see cref="OpenRGBDevice"/>.</returns>
+    public override readonly string ToString()
+    {
+        return Name;
+    }
+
     internal static OpenRGBDevice Parse(ref SequenceReader<byte> input)
     {
         var deviceType = input.ReadDeviceType();
