@@ -7,7 +7,7 @@ namespace ChromaControl.SDK.OpenRGB.Enums;
 /// <summary>
 /// Represents the type a device may be.
 /// </summary>
-public enum OpenRGBDeviceType : uint
+public enum OpenRGBDeviceType
 {
     /// <summary>
     /// Motherboard.

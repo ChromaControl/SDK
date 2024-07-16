@@ -16,15 +16,70 @@ public struct OpenRGBDevice
     /// <summary>
     /// The <see cref="OpenRGBDeviceType"/>.
     /// </summary>
-    public OpenRGBDeviceType DeviceType { get; set; }
+    public OpenRGBDeviceType DeviceType { get; internal set; }
+
+    /// <summary>
+    /// The devices name.
+    /// </summary>
+    public string Name { get; internal set; }
+
+    /// <summary>
+    /// The devices vendor.
+    /// </summary>
+    public string Vendor { get; internal set; }
+
+    /// <summary>
+    /// The devices description.
+    /// </summary>
+    public string Description { get; internal set; }
+
+    /// <summary>
+    /// The devices version number.
+    /// </summary>
+    public string Version { get; internal set; }
+
+    /// <summary>
+    /// The devices serial number.
+    /// </summary>
+    public string Serial { get; internal set; }
+
+    /// <summary>
+    /// The devices location.
+    /// </summary>
+    public string Location { get; internal set; }
+
+    /// <summary>
+    /// The devices leds.
+    /// </summary>
+    public OpenRGBLed[] Leds { get; internal set; }
 
     internal static OpenRGBDevice Parse(ref SequenceReader<byte> input)
     {
         var deviceType = input.ReadDeviceType();
+        var name = input.ReadString();
+        var vendor = input.ReadString();
+        var description = input.ReadString();
+        var version = input.ReadString();
+        var serial = input.ReadString();
+        var location = input.ReadString();
+
+        input.SkipModes();
+        input.SkipZones();
+
+        var leds = input.ReadLeds();
+
+        input.SkipColors();
 
         return new()
         {
-            DeviceType = deviceType
+            DeviceType = deviceType,
+            Name = name,
+            Vendor = vendor,
+            Description = description,
+            Version = version,
+            Serial = serial,
+            Location = location,
+            Leds = leds
         };
     }
 }
