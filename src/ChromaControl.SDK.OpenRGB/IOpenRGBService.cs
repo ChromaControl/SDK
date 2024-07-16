@@ -12,6 +12,11 @@ namespace ChromaControl.SDK.OpenRGB;
 public interface IOpenRGBService
 {
     /// <summary>
+    /// If the OpenRGB service has started.
+    /// </summary>
+    bool Started { get; }
+
+    /// <summary>
     /// The devices available in OpenRGB.
     /// </summary>
     public IReadOnlyList<OpenRGBDevice> Devices { get; }

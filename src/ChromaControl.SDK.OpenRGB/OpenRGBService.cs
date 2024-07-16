@@ -15,6 +15,9 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     private readonly List<OpenRGBDevice> _devices;
 
     /// <inheritdoc/>
+    public bool Started { get; internal set; }
+
+    /// <inheritdoc/>
     public IReadOnlyList<OpenRGBDevice> Devices => _devices.AsReadOnly();
 
     /// <inheritdoc/>
@@ -81,5 +84,7 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     private async void OnDeviceListUpdated(object? sender, EventArgs e)
     {
         await UpdateDeviceList();
+
+        Started = true;
     }
 }
