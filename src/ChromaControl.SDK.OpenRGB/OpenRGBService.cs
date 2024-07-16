@@ -4,6 +4,8 @@
 
 using ChromaControl.SDK.OpenRGB.Internal;
 using ChromaControl.SDK.OpenRGB.Structs;
+using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Drawing;
 
 namespace ChromaControl.SDK.OpenRGB;
@@ -13,13 +15,13 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 {
     private readonly OpenRGBManager _manager;
     private readonly NativeOpenRGBService _service;
-    private readonly List<OpenRGBDevice> _devices;
+    private readonly BlockingCollection<OpenRGBDevice> _devices;
 
     /// <inheritdoc/>
     public bool Started { get; internal set; }
 
     /// <inheritdoc/>
-    public IReadOnlyList<OpenRGBDevice> Devices => _devices.AsReadOnly();
+    public ImmutableList<OpenRGBDevice> Devices => [.. _devices];
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
@@ -39,7 +41,10 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     /// <inheritdoc/>
     public async Task UpdateDeviceListAsync(CancellationToken cancellationToken = default)
     {
-        _devices.Clear();
+        while (_devices.Count > 0)
+        {
+            _devices.TryTake(out _);
+        }
 
         var controllerCountResult = await _service.RequestControllerCountAsync(cancellationToken);
 
@@ -47,7 +52,7 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         {
             var controllerDataResult = await _service.RequestControllerDataAsync(i, cancellationToken);
 
-            _devices.Add(controllerDataResult.Device);
+            _devices.Add(controllerDataResult.Device, cancellationToken);
         }
 
         DeviceListUpdated?.Invoke(this, Devices);

@@ -60,7 +60,7 @@ public partial class Worker : BackgroundService
                 currentColor = Color.Red;
             }
 
-            //LogColorChangeMessage(_logger, currentColor.R, currentColor.G, currentColor.B);
+            LogColorChangeMessage(_logger, currentColor.R, currentColor.G, currentColor.B);
 
             foreach (var device in _service.Devices)
             {
@@ -68,10 +68,10 @@ public partial class Worker : BackgroundService
 
                 buffer.Fill(currentColor);
 
-                //await _service.UpdateLedsAsync(device.Index, buffer, stoppingToken);
+                await _service.UpdateLedsAsync(device.Index, buffer, stoppingToken);
             }
 
-            await Task.Delay(1, stoppingToken);
+            await Task.Delay(1000, stoppingToken);
         }
     }
 

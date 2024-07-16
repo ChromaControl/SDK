@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.OpenRGB.Structs;
+using System.Collections.Immutable;
 using System.Drawing;
 
 namespace ChromaControl.SDK.OpenRGB;
@@ -20,7 +21,7 @@ public interface IOpenRGBService
     /// <summary>
     /// The devices available in OpenRGB.
     /// </summary>
-    public IReadOnlyList<OpenRGBDevice> Devices { get; }
+    public ImmutableList<OpenRGBDevice> Devices { get; }
 
     /// <summary>
     /// Occurs when the <see cref="Devices"/> is updated.
