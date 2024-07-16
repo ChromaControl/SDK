@@ -40,7 +40,7 @@ public interface ISynapseService
     SynapseResult StartService(in Guid appId);
 
     /// <summary>
-    /// Stopes the Synapse service.
+    /// Stops the Synapse service.
     /// </summary>
     /// <returns>A <see cref="SynapseResult"/>.</returns>
     SynapseResult StopService();
