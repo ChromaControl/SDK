@@ -14,9 +14,9 @@ namespace ChromaControl.SDK.OpenRGB.Structs;
 public struct OpenRGBDevice
 {
     /// <summary>
-    /// The <see cref="OpenRGBDeviceType"/>.
+    /// The devices type.
     /// </summary>
-    public OpenRGBDeviceType DeviceType { get; internal set; }
+    public OpenRGBDeviceType Type { get; internal set; }
 
     /// <summary>
     /// The devices name.
@@ -49,12 +49,17 @@ public struct OpenRGBDevice
     public string Location { get; internal set; }
 
     /// <summary>
+    /// The devices zones.
+    /// </summary>
+    public OpenRGBZone[] Zones { get; internal set; }
+
+    /// <summary>
     /// The devices leds.
     /// </summary>
     public OpenRGBLed[] Leds { get; internal set; }
 
     /// <summary>
-    /// Converts this <see cref="OpenRGBDevice"/>
+    /// Converts this <see cref="OpenRGBDevice"/> into a string representation.
     /// </summary>
     /// <returns>A string representation of this <see cref="OpenRGBDevice"/>.</returns>
     public override readonly string ToString()
@@ -64,7 +69,7 @@ public struct OpenRGBDevice
 
     internal static OpenRGBDevice Parse(ref SequenceReader<byte> input)
     {
-        var deviceType = input.ReadDeviceType();
+        var type = input.ReadDeviceType();
         var name = input.ReadString();
         var vendor = input.ReadString();
         var description = input.ReadString();
@@ -73,21 +78,22 @@ public struct OpenRGBDevice
         var location = input.ReadString();
 
         input.SkipModes();
-        input.SkipZones();
 
+        var zones = input.ReadZones();
         var leds = input.ReadLeds();
 
         input.SkipColors();
 
         return new()
         {
-            DeviceType = deviceType,
+            Type = type,
             Name = name,
             Vendor = vendor,
             Description = description,
             Version = version,
             Serial = serial,
             Location = location,
+            Zones = zones,
             Leds = leds
         };
     }

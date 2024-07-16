@@ -23,7 +23,7 @@ public struct OpenRGBLed
     public uint Index { get; internal set; }
 
     /// <summary>
-    /// Converts this <see cref="OpenRGBLed"/>
+    /// Converts this <see cref="OpenRGBLed"/> into a string representation.
     /// </summary>
     /// <returns>A string representation of this <see cref="OpenRGBLed"/>.</returns>
     public override readonly string ToString()

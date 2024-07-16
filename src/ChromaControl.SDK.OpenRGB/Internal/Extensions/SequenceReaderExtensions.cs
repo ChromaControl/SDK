@@ -37,6 +37,11 @@ internal static class SequenceReaderExtensions
         return (OpenRGBDeviceType)reader.ReadInt32();
     }
 
+    public static OpenRGBZoneType ReadZoneType(this ref SequenceReader<byte> reader)
+    {
+        return (OpenRGBZoneType)reader.ReadInt32();
+    }
+
     public static string ReadString(this ref SequenceReader<byte> reader)
     {
         var length = reader.ReadUInt16();
@@ -74,38 +79,32 @@ internal static class SequenceReaderExtensions
         }
     }
 
-    public static void SkipZones(this ref SequenceReader<byte> reader)
+    public static OpenRGBZone[] ReadZones(this ref SequenceReader<byte> reader)
     {
         var numberOfZones = reader.ReadUInt16(); // num_zones
 
+        var result = new OpenRGBZone[numberOfZones];
+
         for (ushort i = 0; i < numberOfZones; i++)
         {
-            var zoneNameLength = reader.ReadUInt16(); // zone_name_len
-            reader.Advance(zoneNameLength); // zone_name
-            reader.Advance(4); // zone_type
-            reader.Advance(4); // zone_leds_min
-            reader.Advance(4); // zone_leds_max
-            reader.Advance(4); // zone_leds_count
-            var zoneMatrixLength = reader.ReadUInt16(); // zone_matrix_len
-
-            if (zoneMatrixLength > 0)
-            {
-                reader.Advance(4); // zone_matrix_height
-                reader.Advance(4); // zone_matrix_width
-                reader.Advance(zoneMatrixLength - 8); // zone_matrix_data
-            }
-
-            var numberOfSegments = reader.ReadUInt16(); // num_segments
-
-            for (ushort j = 0; j < numberOfSegments; j++)
-            {
-                var segmentNameLength = reader.ReadUInt16(); // segment_name_length
-                reader.Advance(segmentNameLength); // segment_name
-                reader.Advance(4); // segment_type
-                reader.Advance(4); // segment_start_idx
-                reader.Advance(4); // segment_leds_count
-            }
+            result[i] = OpenRGBZone.Parse(ref reader, i);
         }
+
+        return result;
+    }
+
+    public static OpenRGBSegment[] ReadSegments(this ref SequenceReader<byte> reader)
+    {
+        var numberOfSegments = reader.ReadUInt16(); // num_segments
+
+        var result = new OpenRGBSegment[numberOfSegments];
+
+        for (ushort i = 0; i < numberOfSegments; i++)
+        {
+            result[i] = OpenRGBSegment.Parse(ref reader, i);
+        }
+
+        return result;
     }
 
     public static void SkipColors(this ref SequenceReader<byte> reader)
@@ -116,7 +115,7 @@ internal static class SequenceReaderExtensions
 
     public static OpenRGBLed[] ReadLeds(this ref SequenceReader<byte> reader)
     {
-        var numberOfLeds = reader.ReadUInt16();
+        var numberOfLeds = reader.ReadUInt16(); // num_leds
 
         var result = new OpenRGBLed[numberOfLeds];
 
