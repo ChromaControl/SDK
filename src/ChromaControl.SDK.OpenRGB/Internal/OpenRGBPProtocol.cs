@@ -48,6 +48,7 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
 
             packet = packetId switch
             {
+                PacketId.RequestControllerCount => new RequestControllerCount() { DeviceIndex = deviceIndex },
                 PacketId.RequestProtocolVersion => new RequestProtocolVersion() { DeviceIndex = deviceIndex },
                 PacketId.SetClientName => new SetClientName() { DeviceIndex = deviceIndex },
                 PacketId.DeviceListUpdated => new DeviceListUpdated() { DeviceIndex = deviceIndex },

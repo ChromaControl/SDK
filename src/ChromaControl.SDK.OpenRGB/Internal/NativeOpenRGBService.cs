@@ -20,6 +20,7 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
     private ProtocolReader? _reader;
     private ProtocolWriter? _writer;
     private Task? _readingTask;
+    private CancellationTokenSource? _deviceListUpdatedCancellationTokenSource;
 
     private readonly SocketConnectionFactory _connectionFactory;
     private readonly OpenRGBPProtocol _protocol;
@@ -35,6 +36,7 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         _pendingRequests = Enum.GetValues<PacketId>()
             .ToDictionary(id => id, _ => new BlockingCollection<IOpenRGBPacket>());
         _devices = [];
+        _deviceListUpdatedCancellationTokenSource = null;
 
         DeviceListUpdated += OnDeviceListUpdated;
     }
@@ -56,6 +58,11 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         {
             ClientVersion = OpenRGBConstants.ProtocolVersion
         });
+    }
+
+    public async Task<RequestControllerCount> RequestControllerCountAsync()
+    {
+        return await SendPacketWithResponse(new RequestControllerCount());
     }
 
     public async Task SetClientNameAsync(string name)
@@ -93,6 +100,15 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         await _connection.DisposeAsync().ConfigureAwait(false);
     }
 
+    private async void OnDeviceListUpdated(object? sender, EventArgs e)
+    {
+        _devices.Clear();
+
+        var controllerCount = await RequestControllerCountAsync();
+
+        Console.WriteLine(controllerCount.Count);
+    }
+
     private async Task ProcessReadAsync()
     {
         if (_reader is null)
@@ -117,7 +133,17 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
 
             if (packet.Id == PacketId.DeviceListUpdated)
             {
-                DeviceListUpdated.Invoke(this, new());
+                _deviceListUpdatedCancellationTokenSource?.Cancel();
+                _deviceListUpdatedCancellationTokenSource = new();
+
+                _ = Task.Delay(1000, _deviceListUpdatedCancellationTokenSource.Token)
+                    .ContinueWith(task =>
+                    {
+                        if (task.IsCompletedSuccessfully)
+                        {
+                            DeviceListUpdated.Invoke(this, new());
+                        }
+                    });
             }
             else
             {
@@ -126,11 +152,6 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
 
             _reader.Advance();
         }
-    }
-
-    private void OnDeviceListUpdated(object? sender, EventArgs e)
-    {
-        _devices.Clear();
     }
 
     private async Task SendPacketWithoutResponse(IOpenRGBPacket packet)
