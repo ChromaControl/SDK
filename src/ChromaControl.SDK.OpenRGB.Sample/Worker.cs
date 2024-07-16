@@ -25,11 +25,11 @@ public partial class Worker : BackgroundService
     /// Creates a <see cref="Worker"/> instance.
     /// </summary>
     /// <param name="logger">The <see cref="ILogger{TCategoryName}"/>.</param>
-    /// <param name="openRGB">The <see cref="IOpenRGBService"/>.</param>
-    public Worker(ILogger<Worker> logger, IOpenRGBService openRGB)
+    /// <param name="service">The <see cref="IOpenRGBService"/>.</param>
+    public Worker(ILogger<Worker> logger, IOpenRGBService service)
     {
         _logger = logger;
-        _service = openRGB;
+        _service = service;
 
         _service.DeviceListUpdated += OnDeviceListUpdated;
     }
