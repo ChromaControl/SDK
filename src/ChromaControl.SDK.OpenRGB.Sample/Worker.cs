@@ -3,30 +3,41 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.OpenRGB.Structs;
+using System.Drawing;
 
 namespace ChromaControl.SDK.OpenRGB.Sample;
 
 /// <summary>
 /// The worker.
 /// </summary>
-public class Worker : BackgroundService
+public partial class Worker : BackgroundService
 {
-    private readonly IOpenRGBService _openRGB;
     private bool _devicesReady;
+
+    private readonly ILogger<Worker> _logger;
+    private readonly IOpenRGBService _service;
+
+    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Changing color to [R = {r}, G = {g}, B = {b}]")]
+    private static partial void LogColorChangeMessage(ILogger logger, byte r, byte g, byte b);
 
     /// <summary>
     /// Creates a <see cref="Worker"/> instance.
     /// </summary>
+    /// <param name="logger">The <see cref="ILogger{TCategoryName}"/>.</param>
     /// <param name="openRGB">The <see cref="IOpenRGBService"/>.</param>
-    public Worker(IOpenRGBService openRGB)
+    public Worker(ILogger<Worker> logger, IOpenRGBService openRGB)
     {
-        _openRGB = openRGB;
-        _openRGB.DeviceListUpdated += OnDeviceListUpdated;
+        _logger = logger;
+        _service = openRGB;
+
+        _service.DeviceListUpdated += OnDeviceListUpdated;
     }
 
     /// <inheritdoc/>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var currentColor = Color.Blue;
+
         while (!stoppingToken.IsCancellationRequested)
         {
             if (!_devicesReady)
@@ -35,7 +46,32 @@ public class Worker : BackgroundService
                 continue;
             }
 
-            Console.WriteLine($"Worker running at: {DateTimeOffset.Now}");
+            if (currentColor == Color.Red)
+            {
+                currentColor = Color.Green;
+            }
+            else if (currentColor == Color.Green)
+            {
+                currentColor = Color.Blue;
+            }
+            else
+            {
+                currentColor = Color.Red;
+            }
+
+            LogColorChangeMessage(_logger, currentColor.R, currentColor.G, currentColor.B);
+
+            foreach (var device in _service.Devices)
+            {
+                var buffer = new Color[device.Leds.Length];
+
+                for (var i = 0; i < buffer.Length; i++)
+                {
+                    buffer[i] = currentColor;
+                }
+
+                await _service.UpdateLedsAsync(device.Index, buffer, stoppingToken);
+            }
 
             await Task.Delay(1000, stoppingToken);
         }
