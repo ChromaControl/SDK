@@ -15,17 +15,17 @@ public struct OpenRGBMatrixMap
     /// <summary>
     /// The matrix maps height.
     /// </summary>
-    public uint Height { get; internal set; }
+    public int Height { get; internal set; }
 
     /// <summary>
     /// The matrix maps width.
     /// </summary>
-    public uint Width { get; internal set; }
+    public int Width { get; internal set; }
 
     /// <summary>
     /// The matrix map.
     /// </summary>
-    public uint[,] Map { get; internal set; }
+    public int[,] Map { get; internal set; }
 
     /// <summary>
     /// Converts this <see cref="OpenRGBMatrixMap"/> into a string representation.
@@ -40,20 +40,20 @@ public struct OpenRGBMatrixMap
     {
         var height = input.ReadUInt32();
         var width = input.ReadUInt32();
-        var map = new uint[height, width];
+        var map = new int[height, width];
 
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
-                map[y, x] = input.ReadUInt32();
+                map[y, x] = (int)input.ReadUInt32();
             }
         }
 
         return new()
         {
-            Height = height,
-            Width = width,
+            Height = (int)height,
+            Width = (int)width,
             Map = map
         };
     }

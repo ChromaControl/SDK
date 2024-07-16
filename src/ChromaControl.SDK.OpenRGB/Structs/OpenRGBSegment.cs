@@ -21,7 +21,7 @@ public struct OpenRGBSegment
     /// <summary>
     /// The segments index.
     /// </summary>
-    public uint Index { get; internal set; }
+    public int Index { get; internal set; }
 
     /// <summary>
     /// The segments type.
@@ -31,12 +31,12 @@ public struct OpenRGBSegment
     /// <summary>
     /// The segments starting index.
     /// </summary>
-    public uint StartIndex { get; internal set; }
+    public int StartIndex { get; internal set; }
 
     /// <summary>
     /// The segments LED count.
     /// </summary>
-    public uint LedCount { get; internal set; }
+    public int LedCount { get; internal set; }
 
     /// <summary>
     /// Converts this <see cref="OpenRGBSegment"/> into a string representation.
@@ -57,10 +57,10 @@ public struct OpenRGBSegment
         return new()
         {
             Name = name,
-            Index = index,
+            Index = (int)index,
             Type = type,
-            StartIndex = startIndex,
-            LedCount = ledCount
+            StartIndex = (int)startIndex,
+            LedCount = (int)ledCount
         };
     }
 }

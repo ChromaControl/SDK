@@ -42,7 +42,7 @@ public interface IOpenRGBService
     /// <param name="size">The new size.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/>.</returns>
-    Task ResizeZoneAsync(uint deviceIndex, uint zoneIndex, uint size, CancellationToken cancellationToken = default);
+    Task ResizeZoneAsync(int deviceIndex, int zoneIndex, int size, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates leds.
@@ -51,7 +51,7 @@ public interface IOpenRGBService
     /// <param name="colors">The colors to set.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/>.</returns>
-    Task UpdateLedsAsync(uint deviceIndex, Color[] colors, CancellationToken cancellationToken = default);
+    Task UpdateLedsAsync(int deviceIndex, Color[] colors, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Updates zone leds.
@@ -61,5 +61,5 @@ public interface IOpenRGBService
     /// <param name="colors">The colors to set.</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/>.</returns>
-    Task UpdateZoneLedsAsync(uint deviceIndex, uint zoneIndex, Color[] colors, CancellationToken cancellationToken = default);
+    Task UpdateZoneLedsAsync(int deviceIndex, int zoneIndex, Color[] colors, CancellationToken cancellationToken = default);
 }

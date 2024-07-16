@@ -54,23 +54,23 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     }
 
     /// <inheritdoc/>
-    public async Task ResizeZoneAsync(uint deviceIndex, uint zoneIndex, uint size, CancellationToken cancellationToken = default)
+    public async Task ResizeZoneAsync(int deviceIndex, int zoneIndex, int size, CancellationToken cancellationToken = default)
     {
-        await _service.ResizeZoneAsync(deviceIndex, zoneIndex, size, cancellationToken);
+        await _service.ResizeZoneAsync((uint)deviceIndex, (uint)zoneIndex, (uint)size, cancellationToken);
 
         _service.OnDeviceListUpdated(_service, new());
     }
 
     /// <inheritdoc/>
-    public async Task UpdateLedsAsync(uint deviceIndex, Color[] colors, CancellationToken cancellationToken = default)
+    public async Task UpdateLedsAsync(int deviceIndex, Color[] colors, CancellationToken cancellationToken = default)
     {
-        await _service.UpdateLedsAsync(deviceIndex, colors, cancellationToken);
+        await _service.UpdateLedsAsync((uint)deviceIndex, colors, cancellationToken);
     }
 
     /// <inheritdoc/>
-    public async Task UpdateZoneLedsAsync(uint deviceIndex, uint zoneIndex, Color[] colors, CancellationToken cancellationToken = default)
+    public async Task UpdateZoneLedsAsync(int deviceIndex, int zoneIndex, Color[] colors, CancellationToken cancellationToken = default)
     {
-        await _service.UpdateZoneLedsAsync(deviceIndex, zoneIndex, colors, cancellationToken);
+        await _service.UpdateZoneLedsAsync((uint)deviceIndex, (uint)zoneIndex, colors, cancellationToken);
     }
 
     /// <inheritdoc/>

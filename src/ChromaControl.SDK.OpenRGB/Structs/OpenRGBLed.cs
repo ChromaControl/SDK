@@ -20,7 +20,7 @@ public struct OpenRGBLed
     /// <summary>
     /// The LEDs index.
     /// </summary>
-    public uint Index { get; internal set; }
+    public int Index { get; internal set; }
 
     /// <summary>
     /// Converts this <see cref="OpenRGBLed"/> into a string representation.
@@ -40,7 +40,7 @@ public struct OpenRGBLed
         return new()
         {
             Name = name,
-            Index = index
+            Index = (int)index
         };
     }
 }

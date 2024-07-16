@@ -21,7 +21,7 @@ public struct OpenRGBZone
     /// <summary>
     /// The zones index.
     /// </summary>
-    public uint Index { get; internal set; }
+    public int Index { get; internal set; }
 
     /// <summary>
     /// The zones type.
@@ -31,17 +31,17 @@ public struct OpenRGBZone
     /// <summary>
     /// The zones minimum LEDs.
     /// </summary>
-    public uint MinimumLeds { get; internal set; }
+    public int MinimumLeds { get; internal set; }
 
     /// <summary>
     /// The zones maximum LEDs.
     /// </summary>
-    public uint MaximumLeds { get; internal set; }
+    public int MaximumLeds { get; internal set; }
 
     /// <summary>
     /// The zones LED count.
     /// </summary>
-    public uint LedCount { get; internal set; }
+    public int LedCount { get; internal set; }
 
     /// <summary>
     /// The zones matrix map.
@@ -84,11 +84,11 @@ public struct OpenRGBZone
         return new()
         {
             Name = name,
-            Index = index,
+            Index = (int)index,
             Type = type,
-            MinimumLeds = minimumLeds,
-            MaximumLeds = maximumLeds,
-            LedCount = ledCount,
+            MinimumLeds = (int)minimumLeds,
+            MaximumLeds = (int)maximumLeds,
+            LedCount = (int)ledCount,
             MatrixMap = matrixMap,
             Segments = segments
         };
