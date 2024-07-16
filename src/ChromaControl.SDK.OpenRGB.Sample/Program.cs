@@ -8,6 +8,7 @@ using ChromaControl.SDK.OpenRGB.Sample;
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services.AddOpenRGBSDK();
+
 builder.Services.AddHostedService<Worker>();
 
 await builder.Build().RunAsync();

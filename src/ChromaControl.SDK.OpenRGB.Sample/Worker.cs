@@ -2,60 +2,47 @@
 // The Chroma Control Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using ChromaControl.SDK.OpenRGB.Structs;
+
 namespace ChromaControl.SDK.OpenRGB.Sample;
 
 /// <summary>
 /// The worker.
 /// </summary>
-public partial class Worker : IHostedService
+public class Worker : BackgroundService
 {
-    private readonly ILogger<Worker> _logger;
     private readonly IOpenRGBService _openRGB;
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Starting OpenRGB Service...")]
-    private static partial void LogStartMessage(ILogger logger);
-
-    [LoggerMessage(Level = LogLevel.Information, Message = "Stopping OpenRGB Service...")]
-    private static partial void LogStopMessage(ILogger logger);
+    private bool _devicesReady;
 
     /// <summary>
     /// Creates a <see cref="Worker"/> instance.
     /// </summary>
-    /// <param name="logger">The <see cref="ILogger{TCategoryName}"/>.</param>
     /// <param name="openRGB">The <see cref="IOpenRGBService"/>.</param>
-    public Worker(ILogger<Worker> logger, IOpenRGBService openRGB)
+    public Worker(IOpenRGBService openRGB)
     {
-        _logger = logger;
         _openRGB = openRGB;
         _openRGB.DeviceListUpdated += OnDeviceListUpdated;
     }
 
-    private void OnDeviceListUpdated(object? sender, IReadOnlyList<Structs.OpenRGBDevice> e)
+    /// <inheritdoc/>
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine();
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            if (!_devicesReady)
+            {
+                await Task.Delay(1000, stoppingToken);
+                continue;
+            }
+
+            Console.WriteLine($"Worker running at: {DateTimeOffset.Now}");
+
+            await Task.Delay(1000, stoppingToken);
+        }
     }
 
-    /// <summary>
-    /// Starts the worker.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <returns>A <see cref="Task"/> representing the worker starting.</returns>
-    public async Task StartAsync(CancellationToken cancellationToken)
+    private void OnDeviceListUpdated(object? sender, IReadOnlyList<OpenRGBDevice> e)
     {
-        LogStartMessage(_logger);
-
-        await _openRGB.StartServiceAsync();
-    }
-
-    /// <summary>
-    /// Stops the worker.
-    /// </summary>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <returns>A <see cref="Task"/> representing the worker stopping.</returns>
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        LogStopMessage(_logger);
-
-        await _openRGB.StopServiceAsync();
+        _devicesReady = true;
     }
 }

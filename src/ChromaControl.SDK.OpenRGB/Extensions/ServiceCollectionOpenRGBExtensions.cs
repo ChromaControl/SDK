@@ -2,6 +2,7 @@
 // The Chroma Control Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using ChromaControl.SDK.OpenRGB.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ChromaControl.SDK.OpenRGB.Extensions;
@@ -19,6 +20,8 @@ public static class ServiceCollectionOpenRGBExtensions
     public static IServiceCollection AddOpenRGBSDK(this IServiceCollection services)
     {
         services.AddSingleton<IOpenRGBService, OpenRGBService>();
+
+        services.AddHostedService<OpenRGBHostService>();
 
         return services;
     }
