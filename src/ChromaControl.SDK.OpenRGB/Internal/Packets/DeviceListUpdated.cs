@@ -18,7 +18,7 @@ internal struct DeviceListUpdated : IOpenRGBPacket
         DeviceIndex = 0;
     }
 
-    public readonly bool TryParse(in SequenceReader<byte> input)
+    public readonly bool TryParse(ref SequenceReader<byte> input)
     {
         return true;
     }

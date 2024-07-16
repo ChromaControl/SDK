@@ -4,36 +4,39 @@
 
 using ChromaControl.SDK.OpenRGB.Internal.Enums;
 using ChromaControl.SDK.OpenRGB.Internal.Extensions;
+using ChromaControl.SDK.OpenRGB.Structs;
 using System.Buffers;
 
 namespace ChromaControl.SDK.OpenRGB.Internal.Packets;
 
-internal struct RequestProtocolVersion : IOpenRGBPacket
+internal struct RequestControllerData : IOpenRGBPacket
 {
-    public readonly PacketId Id => PacketId.RequestProtocolVersion;
+    public readonly PacketId Id => PacketId.RequestControllerData;
 
     public uint DeviceIndex { get; set; }
 
-    public uint ClientVersion { get; set; }
+    public uint ProtocolVersion { get; set; }
 
-    public uint ServerVersion { get; private set; }
+    public OpenRGBDevice Device { get; private set; }
 
-    public RequestProtocolVersion(uint clientVersion)
+    public RequestControllerData(uint deviceIndex, uint protocolVersion)
     {
-        DeviceIndex = 0;
-        ClientVersion = clientVersion;
+        DeviceIndex = deviceIndex;
+        ProtocolVersion = protocolVersion;
     }
 
     public bool TryParse(ref SequenceReader<byte> input)
     {
-        ServerVersion = input.ReadUInt32();
+        _ = input.ReadUInt32();
+
+        Device = OpenRGBDevice.Parse(ref input);
 
         return true;
     }
 
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
-        output.Write(ClientVersion);
+        output.Write(ProtocolVersion);
     }
 
     public readonly uint GetPacketLength()

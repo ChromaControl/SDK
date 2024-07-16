@@ -21,7 +21,7 @@ internal struct RequestControllerCount : IOpenRGBPacket
         DeviceIndex = 0;
     }
 
-    public bool TryParse(in SequenceReader<byte> input)
+    public bool TryParse(ref SequenceReader<byte> input)
     {
         Count = input.ReadUInt32();
 

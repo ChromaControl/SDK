@@ -13,7 +13,7 @@ internal interface IOpenRGBPacket
 
     uint DeviceIndex { get; set; }
 
-    bool TryParse(in SequenceReader<byte> input);
+    bool TryParse(ref SequenceReader<byte> input);
 
     void WriteToBuffer(IBufferWriter<byte> output);
 

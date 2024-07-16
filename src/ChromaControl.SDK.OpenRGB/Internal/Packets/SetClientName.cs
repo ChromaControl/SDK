@@ -22,7 +22,7 @@ internal struct SetClientName : IOpenRGBPacket
         Name = name;
     }
 
-    public bool TryParse(in SequenceReader<byte> input)
+    public bool TryParse(ref SequenceReader<byte> input)
     {
         throw new NotImplementedException();
     }

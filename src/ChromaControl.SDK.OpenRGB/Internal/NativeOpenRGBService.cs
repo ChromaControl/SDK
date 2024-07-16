@@ -25,7 +25,7 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
     private readonly SocketConnectionFactory _connectionFactory;
     private readonly OpenRGBPProtocol _protocol;
     private readonly Dictionary<PacketId, BlockingCollection<IOpenRGBPacket>> _pendingRequests;
-    private readonly List<Device> _devices;
+    private readonly List<OpenRGBDevice> _devices;
 
     private event EventHandler DeviceListUpdated;
 
@@ -52,17 +52,26 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
         _readingTask = ProcessReadAsync();
     }
 
+    public async Task<RequestControllerCount> RequestControllerCountAsync()
+    {
+        return await SendPacketWithResponse(new RequestControllerCount());
+    }
+
+    public async Task<RequestControllerData> RequestControllerDataAsync(uint deviceIndex)
+    {
+        return await SendPacketWithResponse(new RequestControllerData()
+        {
+            DeviceIndex = deviceIndex,
+            ProtocolVersion = OpenRGBConstants.ProtocolVersion
+        });
+    }
+
     public async Task<RequestProtocolVersion> RequestProtocolVersionAsync()
     {
         return await SendPacketWithResponse(new RequestProtocolVersion
         {
             ClientVersion = OpenRGBConstants.ProtocolVersion
         });
-    }
-
-    public async Task<RequestControllerCount> RequestControllerCountAsync()
-    {
-        return await SendPacketWithResponse(new RequestControllerCount());
     }
 
     public async Task SetClientNameAsync(string name)
@@ -104,9 +113,16 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
     {
         _devices.Clear();
 
-        var controllerCount = await RequestControllerCountAsync();
+        var controllerCountResult = await RequestControllerCountAsync();
 
-        Console.WriteLine(controllerCount.Count);
+        for (uint i = 0; i < controllerCountResult.Count; i++)
+        {
+            var controllerDataResult = await RequestControllerDataAsync(i);
+
+            _devices.Add(controllerDataResult.Device);
+        }
+
+        Console.WriteLine(_devices.Count);
     }
 
     private async Task ProcessReadAsync()
