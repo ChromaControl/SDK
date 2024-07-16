@@ -2,13 +2,12 @@
 // The Chroma Control Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using ChromaControl.SDK.Synapse;
 using ChromaControl.SDK.Synapse.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace ChromaControl.SDK.OpenRGB.Hosting;
+namespace ChromaControl.SDK.Synapse.Hosting;
 
 /// <summary>
 /// The host service for Synapse.

@@ -2,7 +2,7 @@
 // The Chroma Control Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using ChromaControl.SDK.OpenRGB.Hosting;
+using ChromaControl.SDK.Synapse.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ChromaControl.SDK.Synapse.Extensions;
