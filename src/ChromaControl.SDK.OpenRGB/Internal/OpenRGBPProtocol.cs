@@ -6,17 +6,48 @@ using ChromaControl.SDK.OpenRGB.Internal.Enums;
 using ChromaControl.SDK.OpenRGB.Internal.Extensions;
 using ChromaControl.SDK.OpenRGB.Internal.Packets;
 using ChromaControl.SDK.OpenRGB.Internal.Protocol;
+using ChromaControl.SDK.OpenRGB.Internal.Sockets;
+using Microsoft.AspNetCore.Connections;
 using System.Buffers;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Text;
 
 namespace ChromaControl.SDK.OpenRGB.Internal;
 
-internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketWriter<IOpenRGBPacket>
+internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketWriter<IOpenRGBPacket>, IAsyncDisposable
 {
-    private const int HeaderLength = 16;
+    private ConnectionContext? _connection;
+    private ProtocolReader? _reader;
+    private ProtocolWriter? _writer;
+    private Task? _readingTask;
+    private CancellationTokenSource? _deviceListUpdatedCancellationTokenSource;
 
     private static ReadOnlySpan<byte> Magic => Encoding.ASCII.GetBytes("ORGB");
+
+    private readonly Dictionary<PacketId, BlockingCollection<IOpenRGBPacket>> _pendingRequests;
+
+    private const int HeaderLength = 16;
+
+    public event EventHandler? DeviceListUpdated;
+
+    public OpenRGBPProtocol()
+    {
+        _pendingRequests = Enum.GetValues<PacketId>()
+            .ToDictionary(id => id, _ => new BlockingCollection<IOpenRGBPacket>());
+
+        _deviceListUpdatedCancellationTokenSource = null;
+    }
+
+    public async Task StartAsync(SocketConnectionFactory connectionFactory, EndPoint endPoint, CancellationToken cancellationToken = default)
+    {
+        _connection = await connectionFactory.ConnectAsync(endPoint, cancellationToken).ConfigureAwait(false);
+
+        _reader = _connection.CreateReader();
+        _writer = _connection.CreateWriter();
+
+        _readingTask = ProcessReadAsync();
+    }
 
     public bool TryParsePacket(in ReadOnlySequence<byte> input, ref SequencePosition consumed, ref SequencePosition examined, out IOpenRGBPacket packet)
     {
@@ -78,5 +109,104 @@ internal sealed class OpenRGBPProtocol : IPacketReader<IOpenRGBPacket>, IPacketW
         output.Write(packet.GetPacketLength());
 
         packet.WriteToBuffer(output);
+    }
+
+    public async Task SendPacketWithoutResponse(IOpenRGBPacket packet, CancellationToken cancellationToken = default)
+    {
+        if (_writer is null)
+        {
+            throw new InvalidOperationException("ConnectAsync must be called first.");
+        }
+
+        await _writer.WriteAsync(this, packet, cancellationToken);
+    }
+
+    public async Task<TPacket> SendPacketWithResponse<TPacket>(TPacket packet, CancellationToken cancellationToken = default) where TPacket : IOpenRGBPacket
+    {
+        await SendPacketWithoutResponse(packet, cancellationToken);
+
+        var result = await Task.Run(() =>
+        {
+            if (!_pendingRequests[packet.Id].TryTake(out var result, 1000, cancellationToken))
+            {
+                throw new TimeoutException($"OpenRGB did not reply to {packet.Id} in the required amount of time.");
+            }
+
+            return result;
+        });
+
+        return (TPacket)result;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_connection is null)
+        {
+            return;
+        }
+
+        if (_writer is not null)
+        {
+            await _writer.DisposeAsync().ConfigureAwait(false);
+        }
+
+        _connection.Transport.Input.CancelPendingRead();
+
+        if (_readingTask is not null)
+        {
+            await _readingTask.ConfigureAwait(false);
+        }
+
+        if (_reader is not null)
+        {
+            await _reader.DisposeAsync().ConfigureAwait(false);
+        }
+
+        await _connection.DisposeAsync().ConfigureAwait(false);
+    }
+
+    private async Task ProcessReadAsync()
+    {
+        if (_reader is null)
+        {
+            return;
+        }
+
+        while (true)
+        {
+            var result = await _reader.ReadAsync(this);
+            var packet = result.Packet;
+
+            if (result.IsCompleted || result.IsCanceled)
+            {
+                break;
+            }
+
+            if (packet is null)
+            {
+                break;
+            }
+
+            if (packet.Id == PacketId.DeviceListUpdated)
+            {
+                _deviceListUpdatedCancellationTokenSource?.Cancel();
+                _deviceListUpdatedCancellationTokenSource = new();
+
+                _ = Task.Delay(1000, _deviceListUpdatedCancellationTokenSource.Token)
+                    .ContinueWith(task =>
+                    {
+                        if (task.IsCompletedSuccessfully)
+                        {
+                            DeviceListUpdated?.Invoke(this, new());
+                        }
+                    });
+            }
+            else
+            {
+                _pendingRequests[packet.Id].Add(packet);
+            }
+
+            _reader.Advance();
+        }
     }
 }
