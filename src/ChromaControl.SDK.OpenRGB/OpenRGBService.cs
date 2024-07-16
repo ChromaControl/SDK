@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.OpenRGB.Internal;
+using ChromaControl.SDK.OpenRGB.Structs;
 
 namespace ChromaControl.SDK.OpenRGB;
 
@@ -11,6 +12,9 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 {
     private readonly OpenRGBManager _openRGBManager;
     private readonly NativeOpenRGBService _openRGBService;
+
+    /// <inheritdoc/>
+    public IReadOnlyList<OpenRGBDevice> Devices => _openRGBService.Devices.AsReadOnly();
 
     /// <summary>
     /// Creates a <see cref="OpenRGBService"/> instance.
