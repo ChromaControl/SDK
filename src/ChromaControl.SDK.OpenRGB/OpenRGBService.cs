@@ -4,6 +4,7 @@
 
 using ChromaControl.SDK.OpenRGB.Internal;
 using ChromaControl.SDK.OpenRGB.Structs;
+using System.Drawing;
 
 namespace ChromaControl.SDK.OpenRGB;
 
@@ -58,6 +59,12 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         await _service.ResizeZoneAsync(deviceIndex, zoneIndex, size, cancellationToken);
 
         _service.OnDeviceListUpdated(_service, new());
+    }
+
+    /// <inheritdoc/>
+    public async Task UpdateLedsAsync(uint deviceIndex, Color[] colors, CancellationToken cancellationToken = default)
+    {
+        await _service.UpdateLedsAsync(deviceIndex, colors, cancellationToken);
     }
 
     /// <inheritdoc/>

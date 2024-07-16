@@ -4,6 +4,7 @@
 
 using ChromaControl.SDK.OpenRGB.Internal.Packets;
 using ChromaControl.SDK.OpenRGB.Internal.Sockets;
+using System.Drawing;
 using System.Net;
 
 namespace ChromaControl.SDK.OpenRGB.Internal;
@@ -54,6 +55,11 @@ internal sealed class NativeOpenRGBService : IAsyncDisposable
     public async Task ResizeZoneAsync(uint deviceIndex, uint zoneIndex, uint size, CancellationToken cancellationToken = default)
     {
         await _protocol.SendPacketWithoutResponse(new ResizeZone(deviceIndex, zoneIndex, size), cancellationToken);
+    }
+
+    public async Task UpdateLedsAsync(uint deviceIndex, Color[] colors, CancellationToken cancellationToken = default)
+    {
+        await _protocol.SendPacketWithoutResponse(new UpdateLeds(deviceIndex, colors), cancellationToken);
     }
 
     public ValueTask DisposeAsync()
