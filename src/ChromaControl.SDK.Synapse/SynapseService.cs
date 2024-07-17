@@ -85,7 +85,7 @@ public partial class SynapseService : ISynapseService
                 Color.FromArgb(span[7], span[4], span[5], span[6]),
                 Color.FromArgb(span[11], span[8], span[9], span[10]),
                 Color.FromArgb(span[15], span[12], span[13], span[14]),
-                Color.FromArgb(span[10], span[16], span[17], span[18]),
+                Color.FromArgb(span[19], span[16], span[17], span[18]),
             };
 
             ColorsReceived?.Invoke(this, colors);
