@@ -32,9 +32,7 @@ internal sealed class Job : IDisposable
             nLength = (uint)Marshal.SizeOf(typeof(SECURITY_ATTRIBUTES))
         };
 
-#pragma warning disable CA1416 // Validate platform compatibility
         var jobHandle = PInvoke.CreateJobObject(securityAttributes, "ChromaControl.SDK.OpenRGB");
-#pragma warning restore CA1416 // Validate platform compatibility
 
         if (jobHandle.IsInvalid)
         {
@@ -60,9 +58,7 @@ internal sealed class Job : IDisposable
 
         var infoSize = (uint)Marshal.SizeOf<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>();
 
-#pragma warning disable CA1416 // Validate platform compatibility
         var setInfoResult = PInvoke.SetInformationJobObject(jobHandle, JOBOBJECTINFOCLASS.JobObjectExtendedLimitInformation, &info, infoSize);
-#pragma warning restore CA1416 // Validate platform compatibility
 
         if (!setInfoResult)
         {
@@ -73,9 +69,7 @@ internal sealed class Job : IDisposable
 
     public void AssignProcess(Process process)
     {
-#pragma warning disable CA1416 // Validate platform compatibility
         var assignProcessResult = PInvoke.AssignProcessToJobObject(_jobHandle, process.SafeHandle);
-#pragma warning restore CA1416 // Validate platform compatibility
 
         if (!assignProcessResult)
         {
