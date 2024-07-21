@@ -129,8 +129,8 @@ internal sealed partial class OpenRGBManager : IDisposable
 
         var searchPaths = new List<string>()
         {
-            Path.Combine(assemblyPath, "OpenRGB.exe"),
-            Path.Combine(assemblyPath, "runtimes", runtimeIdentifier, "native", "OpenRGB.exe")
+            Path.Combine(assemblyPath, "ChromaControl.OpenRGB.exe"),
+            Path.Combine(assemblyPath, "runtimes", runtimeIdentifier, "native", "ChromaControl.OpenRGB.exe")
         };
 
         foreach (var searchPath in searchPaths)
