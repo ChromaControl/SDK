@@ -6,4 +6,11 @@
 # Chroma Control SDKs
 This repository contains SDKs used as a part of Chroma Control.
 
+## Getting Started
 The packages are available on [NuGet](https://www.nuget.org/packages?q=ChromaControl.SDK&includeComputedFrameworks=true&prerel=true&sortby=relevance) under the `ChromaControl.SDK.*` namespace.
+
+## Reporting security issues and bugs
+You can follow the instructions in our [Security Policy](https://github.com/ChromaControl/SDK/security/policy) to report security related issues. You can also find the full list of supported versions there as well.
+
+## Code of Conduct
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
