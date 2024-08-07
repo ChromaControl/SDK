@@ -22,6 +22,9 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     public bool Started { get; internal set; }
 
     /// <inheritdoc/>
+    public event EventHandler<bool>? StartedChanged;
+
+    /// <inheritdoc/>
     public ImmutableList<OpenRGBDevice> Devices => [.. _devices];
 
     /// <inheritdoc/>
@@ -51,6 +54,7 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         if (Started)
         {
             Started = false;
+            StartedChanged?.Invoke(this, Started);
 
             _service.DeviceListUpdated -= OnDeviceListUpdated;
             await _service.DisposeAsync();
@@ -242,5 +246,6 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         await UpdateDeviceListAsync();
 
         Started = true;
+        StartedChanged?.Invoke(this, Started);
     }
 }

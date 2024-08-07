@@ -20,6 +20,11 @@ public interface IOpenRGBService
     bool Started { get; }
 
     /// <summary>
+    /// Occurs when <see cref="Started"/> changes.
+    /// </summary>
+    event EventHandler<bool>? StartedChanged;
+
+    /// <summary>
     /// The devices available in OpenRGB.
     /// </summary>
     public ImmutableList<OpenRGBDevice> Devices { get; }
