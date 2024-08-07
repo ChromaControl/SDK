@@ -13,13 +13,14 @@ internal sealed partial class OpenRGBManager : IDisposable
 {
     private static bool Is32Bit => nint.Size == 4;
 
-    private readonly Process _process = CreateProcess();
+    private Process? _process;
     private readonly Job _job;
     private readonly string _configFilePath = Path.Combine(OpenRGBConstants.ConfigPath, "OpenRGB.json");
 
     public OpenRGBManager()
     {
         _job = new();
+        _job.AssignProcess(Process.GetCurrentProcess());
     }
 
     public void UpdateConfigFile(JsonNode config)
@@ -34,20 +35,33 @@ internal sealed partial class OpenRGBManager : IDisposable
 
     public void Start()
     {
-        _job.AssignProcess(Process.GetCurrentProcess());
-
-        _process.Start();
+        if (_process == null)
+        {
+            _process = CreateProcess();
+            _process.Start();
+        }
     }
 
     public void Stop()
     {
-        _process.Kill();
+        if (_process != null)
+        {
+            _process.Kill();
+            _process.Dispose();
+            _process = null;
+        }
+
+        var processes = Process.GetProcessesByName("ChromaControl.OpenRGB");
+
+        foreach (var process in processes)
+        {
+            process.Kill();
+        }
     }
 
     public void Dispose()
     {
-        _process.Kill();
-        _process.Dispose();
+        Stop();
 
         _job.Dispose();
 

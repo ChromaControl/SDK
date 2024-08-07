@@ -36,6 +36,13 @@ public interface IOpenRGBService
     void UpdateConfiguration(JsonNode config);
 
     /// <summary>
+    /// Restarts the service.
+    /// </summary>
+    /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+    /// <returns>A <see cref="Task"/>.</returns>
+    Task Restart(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Updates the device list.
     /// </summary>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
