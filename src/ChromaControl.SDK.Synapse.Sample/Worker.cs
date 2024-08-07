@@ -18,7 +18,7 @@ public partial class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly ISynapseService _service;
 
-    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Color changed to [R = {r}, G = {g}, B = {b}]")]
+    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Color changed to [R = {r}, G = {g}, B = {b}]", EventName = "ChangingColor")]
     private static partial void LogColorChangedMessage(ILogger logger, byte r, byte g, byte b);
 
     /// <summary>

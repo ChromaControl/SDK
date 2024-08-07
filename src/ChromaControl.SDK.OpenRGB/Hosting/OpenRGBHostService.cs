@@ -15,10 +15,10 @@ public partial class OpenRGBHostService : IHostedService
     private readonly ILogger<OpenRGBHostService> _logger;
     private readonly OpenRGBService _openRGB;
 
-    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "OpenRGB SDK is starting up...")]
+    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "OpenRGB SDK is starting up...", EventName = "OpenRGBStarting")]
     private static partial void LogStartMessage(ILogger logger);
 
-    [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "OpenRGB SDK is shutting down...")]
+    [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "OpenRGB SDK is shutting down...", EventName = "OpenRGBStopping")]
     private static partial void LogStopMessage(ILogger logger);
 
     /// <summary>

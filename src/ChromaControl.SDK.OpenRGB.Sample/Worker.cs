@@ -18,7 +18,7 @@ public partial class Worker : BackgroundService
     private readonly ILogger<Worker> _logger;
     private readonly IOpenRGBService _service;
 
-    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Changing color to [R = {r}, G = {g}, B = {b}]")]
+    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Changing color to [R = {r}, G = {g}, B = {b}]", EventName = "ChangeColor")]
     private static partial void LogColorChangeMessage(ILogger logger, byte r, byte g, byte b);
 
     /// <summary>

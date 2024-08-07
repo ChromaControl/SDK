@@ -18,13 +18,13 @@ public partial class SynapseHostService : IHostedService
     private readonly IConfiguration _configuration;
     private readonly SynapseService _synapse;
 
-    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Synapse SDK is starting up...")]
+    [LoggerMessage(EventId = 0, Level = LogLevel.Information, Message = "Synapse SDK is starting up...", EventName = "SynapseStarting")]
     private static partial void LogStartMessage(ILogger logger);
 
-    [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "Synapse SDK failed to start, invalid configuration.")]
+    [LoggerMessage(EventId = 1, Level = LogLevel.Error, Message = "Synapse SDK failed to start, invalid configuration.", EventName = "SynapseStartFailure")]
     private static partial void LogStartErrorMessage(ILogger logger);
 
-    [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "Synapse SDK is shutting down...")]
+    [LoggerMessage(EventId = 1, Level = LogLevel.Information, Message = "Synapse SDK is shutting down...", EventName = "SynapseStopping")]
     private static partial void LogStopMessage(ILogger logger);
 
     /// <summary>
