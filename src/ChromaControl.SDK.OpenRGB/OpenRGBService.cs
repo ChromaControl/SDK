@@ -7,6 +7,7 @@ using ChromaControl.SDK.OpenRGB.Structs;
 using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Drawing;
+using System.Text.Json.Nodes;
 
 namespace ChromaControl.SDK.OpenRGB;
 
@@ -36,6 +37,12 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         _devices = [];
 
         _service.DeviceListUpdated += OnDeviceListUpdated;
+    }
+
+    /// <inheritdoc/>
+    public void UpdateConfiguration(JsonNode config)
+    {
+        _manager.UpdateConfigFile(config);
     }
 
     /// <inheritdoc/>

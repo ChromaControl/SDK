@@ -2,7 +2,6 @@
 // The Chroma Control Contributors licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using ChromaControl.SDK.OpenRGB.Internal.Extensions;
 using ChromaControl.SDK.OpenRGB.Internal.Windows;
 using System.Diagnostics;
 using System.Text.Json;
@@ -16,16 +15,25 @@ internal sealed partial class OpenRGBManager : IDisposable
 
     private readonly Process _process = CreateProcess();
     private readonly Job _job;
+    private readonly string _configFilePath = Path.Combine(OpenRGBConstants.ConfigPath, "OpenRGB.json");
 
     public OpenRGBManager()
     {
         _job = new();
     }
 
+    public void UpdateConfigFile(JsonNode config)
+    {
+        var newJson = config.ToJsonString(new JsonSerializerOptions
+        {
+            WriteIndented = true
+        });
+
+        File.WriteAllText(_configFilePath, newJson);
+    }
+
     public void Start()
     {
-        UpdateConfigFile();
-
         _job.AssignProcess(Process.GetCurrentProcess());
 
         _process.Start();
@@ -44,52 +52,6 @@ internal sealed partial class OpenRGBManager : IDisposable
         _job.Dispose();
 
         GC.SuppressFinalize(this);
-    }
-
-    private static void UpdateConfigFile()
-    {
-        var configFilePath = Path.Combine(OpenRGBConstants.ConfigPath, "OpenRGB.json");
-
-        JsonNode? document;
-
-        if (File.Exists(configFilePath))
-        {
-            var json = File.ReadAllText(configFilePath);
-            document = JsonNode.Parse(json)!;
-        }
-        else
-        {
-            document = JsonNode.Parse("{\"Detectors\":{\"detectors\":{}}}")!;
-        }
-
-        foreach (var detector in OpenRGBConstants.DisabledDetectors)
-        {
-            document["Detectors"]!["detectors"]![detector] = false;
-        }
-
-        try
-        {
-            var mergeConfigFilePath = Path.Combine(OpenRGBConstants.ConfigPath, "OpenRGB.Merge.json");
-
-            if (File.Exists(mergeConfigFilePath))
-            {
-                var json = File.ReadAllText(mergeConfigFilePath);
-                var mergeDocument = JsonNode.Parse(json);
-
-                if (mergeDocument is not null)
-                {
-                    document.Merge(mergeDocument);
-                }
-            }
-        }
-        catch { }
-
-        var newJson = document.ToJsonString(new JsonSerializerOptions
-        {
-            WriteIndented = true
-        });
-
-        File.WriteAllText(configFilePath, newJson);
     }
 
     private static Process CreateProcess()

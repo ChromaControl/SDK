@@ -5,6 +5,7 @@
 using ChromaControl.SDK.OpenRGB.Structs;
 using System.Collections.Immutable;
 using System.Drawing;
+using System.Text.Json.Nodes;
 
 namespace ChromaControl.SDK.OpenRGB;
 
@@ -27,6 +28,12 @@ public interface IOpenRGBService
     /// Occurs when the <see cref="Devices"/> is updated.
     /// </summary>
     event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
+
+    /// <summary>
+    /// Updates the OpenRGB configuration.
+    /// </summary>
+    /// <param name="config">The <see cref="JsonNode"/> configuration.</param>
+    void UpdateConfiguration(JsonNode config);
 
     /// <summary>
     /// Updates the device list.
