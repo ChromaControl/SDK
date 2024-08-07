@@ -37,7 +37,7 @@ internal struct UpdateZoneLeds : IOpenRGBPacket
 
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
-        output.Write(16 + Length);
+        output.Write(Length);
         output.Write(ZoneIndex);
         output.Write((ushort)Colors.Length);
 

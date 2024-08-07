@@ -34,7 +34,7 @@ internal struct UpdateLeds : IOpenRGBPacket
 
     public readonly void WriteToBuffer(IBufferWriter<byte> output)
     {
-        output.Write(16 + Length);
+        output.Write(Length);
         output.Write((ushort)Colors.Length);
 
         for (ushort i = 0; i < Colors.Length; i++)

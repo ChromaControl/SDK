@@ -4,7 +4,7 @@
     <NoWarn>NU1507</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="ChromaControl.Native.OpenRGB" Version="1.0.4" />
+    <PackageVersion Include="ChromaControl.Native.OpenRGB" Version="1.0.5" />
     <PackageVersion Include="Microsoft.AspNetCore.Connections.Abstractions" Version="8.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
