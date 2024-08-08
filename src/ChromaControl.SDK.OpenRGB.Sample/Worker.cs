@@ -13,7 +13,7 @@ namespace ChromaControl.SDK.OpenRGB.Sample;
 /// </summary>
 public partial class Worker : BackgroundService
 {
-    private bool _devicesReady;
+    private IReadOnlyList<OpenRGBDevice> _devices = [];
 
     private readonly ILogger<Worker> _logger;
     private readonly IOpenRGBService _service;
@@ -41,7 +41,7 @@ public partial class Worker : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (!_devicesReady)
+            if (_devices.Count == 0)
             {
                 await Task.Delay(1000, stoppingToken);
                 continue;
@@ -62,7 +62,7 @@ public partial class Worker : BackgroundService
 
             LogColorChangeMessage(_logger, currentColor.R, currentColor.G, currentColor.B);
 
-            foreach (var device in _service.Devices)
+            foreach (var device in _devices)
             {
                 var buffer = device.CreateColorBuffer();
 
@@ -77,6 +77,6 @@ public partial class Worker : BackgroundService
 
     private void OnDeviceListUpdated(object? sender, IReadOnlyList<OpenRGBDevice> e)
     {
-        _devicesReady = true;
+        _devices = e;
     }
 }

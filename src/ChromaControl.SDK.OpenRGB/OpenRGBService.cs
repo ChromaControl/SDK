@@ -4,8 +4,6 @@
 
 using ChromaControl.SDK.OpenRGB.Internal;
 using ChromaControl.SDK.OpenRGB.Structs;
-using System.Collections.Concurrent;
-using System.Collections.Immutable;
 using System.Drawing;
 using System.Text.Json.Nodes;
 
@@ -15,7 +13,6 @@ namespace ChromaControl.SDK.OpenRGB;
 public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 {
     private NativeOpenRGBService _service;
-    private BlockingCollection<OpenRGBDevice> _devices;
     private readonly OpenRGBManager _manager;
 
     /// <inheritdoc/>
@@ -23,9 +20,6 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 
     /// <inheritdoc/>
     public event EventHandler<bool>? StartedChanged;
-
-    /// <inheritdoc/>
-    public ImmutableList<OpenRGBDevice> Devices => [.. _devices];
 
     /// <inheritdoc/>
     public event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
@@ -37,7 +31,6 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     {
         _manager = new();
         _service = new();
-        _devices = [];
 
         _service.DeviceListUpdated += OnDeviceListUpdated;
     }
@@ -61,8 +54,6 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
             _service = new();
             _service.DeviceListUpdated += OnDeviceListUpdated;
 
-            _devices = [];
-
             _manager.Stop();
 
             await StartServiceAsync(cancellationToken);
@@ -70,12 +61,9 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
     }
 
     /// <inheritdoc/>
-    public async Task UpdateDeviceListAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<OpenRGBDevice>> GetDeviceListAsync(CancellationToken cancellationToken = default)
     {
-        while (_devices.Count > 0)
-        {
-            _devices.TryTake(out _);
-        }
+        var result = new List<OpenRGBDevice>();
 
         var controllerCountResult = await _service.RequestControllerCountAsync(cancellationToken);
 
@@ -83,10 +71,10 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
         {
             var controllerDataResult = await _service.RequestControllerDataAsync(i, cancellationToken);
 
-            _devices.Add(controllerDataResult.Device, cancellationToken);
+            result.Add(controllerDataResult.Device);
         }
 
-        DeviceListUpdated?.Invoke(this, Devices);
+        return result;
     }
 
     /// <inheritdoc/>
@@ -243,7 +231,8 @@ public class OpenRGBService : IOpenRGBService, IAsyncDisposable
 
     private async void OnDeviceListUpdated(object? sender, EventArgs e)
     {
-        await UpdateDeviceListAsync();
+        var devices = await GetDeviceListAsync();
+        DeviceListUpdated?.Invoke(this, devices);
 
         Started = true;
         StartedChanged?.Invoke(this, Started);

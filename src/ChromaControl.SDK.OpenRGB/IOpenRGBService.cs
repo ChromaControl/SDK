@@ -3,7 +3,6 @@
 // See the LICENSE file in the project root for more information.
 
 using ChromaControl.SDK.OpenRGB.Structs;
-using System.Collections.Immutable;
 using System.Drawing;
 using System.Text.Json.Nodes;
 
@@ -25,12 +24,7 @@ public interface IOpenRGBService
     event EventHandler<bool>? StartedChanged;
 
     /// <summary>
-    /// The devices available in OpenRGB.
-    /// </summary>
-    public ImmutableList<OpenRGBDevice> Devices { get; }
-
-    /// <summary>
-    /// Occurs when the <see cref="Devices"/> is updated.
+    /// Occurs when the device list is updated.
     /// </summary>
     event EventHandler<IReadOnlyList<OpenRGBDevice>>? DeviceListUpdated;
 
@@ -48,11 +42,11 @@ public interface IOpenRGBService
     Task Restart(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Updates the device list.
+    /// Gets the device list.
     /// </summary>
     /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
     /// <returns>A <see cref="Task"/>.</returns>
-    Task UpdateDeviceListAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<OpenRGBDevice>> GetDeviceListAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Resizes a zone.
